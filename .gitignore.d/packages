@@ -1,0 +1,5 @@
+*
+!/.gitignore.d
+!/.gitignore.d/packages
+!/.packages
+!/.packages.ignore
