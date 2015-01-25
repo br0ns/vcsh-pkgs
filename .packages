@@ -13,7 +13,11 @@ autocutsel
 autojump
 binutils
 binutils-arm-linux-gnueabi
+binutils-multiarch-dev
+binutils-x86-64-linux-gnu
 bison
+blueman
+bluetooth
 brasero
 build-essential
 bzr
@@ -29,6 +33,7 @@ dbus
 debootstrap
 deluge
 dietlibc-dev
+dietlibc-dev:i386
 dmz-cursor-theme
 dosbox
 dtrx
@@ -53,6 +58,8 @@ fuse
 g++
 gcc
 gcc-4.3-arm-linux-gnueabi
+gcc-4.4-mips-linux-gnu
+gcc-doc
 gcc-multilib
 gdb
 gdb-multiarch
@@ -96,14 +103,17 @@ libglib2.0-0:i386
 libgmp-dev
 libgnomeui-0:i386
 libgpgme11-dev
+liblua5.2-0:i386
 liblzma-dev
 libmagic-dev
 libmcrypt-dev
 libmysqlclient-dev
 libnacl-dev
+libopenssl-ruby
 libpcap-dev
 libpcre3-dev
 libreadline-dev
+libseccomp2:i386
 libsm6:i386
 libsnappy-dev
 libsqlite3-dev
