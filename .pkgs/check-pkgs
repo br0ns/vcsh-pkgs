@@ -476,6 +476,12 @@ def step_decide ():
                 return
 
 def main ():
+    # Drop privs to owner of this file
+    uid = os.stat(__file__).st_uid
+    gid = os.stat(__file__).st_gid
+    os.setuid(uid)
+    os.setgid(gid)
+
     # Claim PID file
     import fcntl
     pidfile = open('/tmp/check-pkgs.pid', 'a+')
