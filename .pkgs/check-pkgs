@@ -486,7 +486,7 @@ def main ():
     import fcntl
     pidfile = open('/tmp/check-pkgs.pid', 'a+')
     try:
-        fcntl.flock(self.pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fcntl.flock(pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
         print 'check-pkgs is already running; exiting'
         sys.exit(0)
