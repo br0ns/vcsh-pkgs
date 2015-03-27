@@ -321,7 +321,7 @@ def step_dowant ():
                 break
             elif opt == 'a':
                 while to_install:
-                    pkg = to_install[0]
+                    pkg = to_install.pop(0)
                     print 'Package: %s' % pkg
                     opt = optlist([('i', 'Install'),
                                    ('n', 'Do nothing'),
@@ -374,7 +374,7 @@ def step_delete ():
                 break
             elif opt == 'a':
                 while to_delete:
-                    pkg = to_delete[0]
+                    pkg = to_delete.pop(0)
                     print 'Package: %s' % pkg
                     opt = optlist([('d', 'Install'),
                                    ('n', 'Do nothing'),
