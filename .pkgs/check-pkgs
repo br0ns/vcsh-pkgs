@@ -476,6 +476,21 @@ def step_decide ():
                 return
 
 def main ():
+    # Claim PID file
+    import fcntl
+    pidfile = open('/tmp/check-pkgs.pid', 'a+')
+    try:
+        fcntl.flock(self.pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        print 'check-pkgs is already running; exiting'
+        sys.exit(0)
+    pidfile.seek(0)
+    pidfile.truncate()
+    pidfile.write(str(os.getpid()))
+    pidfile.flush()
+    pidfile.seek(0)
+
+    # And go!
     step_deinstall()
     step_dowant()
     step_delete()
