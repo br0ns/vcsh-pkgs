@@ -479,8 +479,10 @@ def main ():
     # Drop privs to owner of this file
     uid = os.stat(__file__).st_uid
     gid = os.stat(__file__).st_gid
-    os.setgid(gid)
-    os.setuid(uid)
+    if os.getuid() != uid:
+        print 'Dropping privs'
+        os.setgid(gid)
+        os.setuid(uid)
 
     # Claim PID file
     import fcntl
