@@ -480,7 +480,6 @@ def main ():
     uid = os.stat(__file__).st_uid
     gid = os.stat(__file__).st_gid
     if os.getuid() != uid:
-        print 'Dropping privs'
         os.setgid(gid)
         os.setuid(uid)
 
