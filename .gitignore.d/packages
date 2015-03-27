@@ -1,12 +1,5 @@
 *
 !/.gitignore.d
 !/.gitignore.d/packages
-!/.packages
-!/.packages.ignore
 !/.pkgs
-!/.pkgs/check-pkgs.sh
-!/.pkgs/delete.pkgs
-!/.pkgs/ignore.pkgs
-!/.pkgs/pkgs.sh
-!/.pkgs/remind.pkgs
-!/.pkgs/wanted.pkgs
+!/.pkgs/check-pkgs

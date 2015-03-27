@@ -1,0 +1,490 @@
+#!/usr/bin/env python2.7
+import sys, copy, re, os, string, argparse
+
+def die (s = '', exit_code = 1):
+    print >>sys.stderr, s
+    sys.exit(exit_code)
+
+def yesno (s, default):
+    prompt = '%s [%s]: ' % (s, 'Y/n' if default else 'y/N')
+    while True:
+        opt = raw_input(prompt).lower()
+        if opt == '':
+            return default
+        if opt in ('yes', 'y'):
+            return True
+        if opt in ('no', 'n'):
+            return False
+        print 'Please answer yes or no'
+
+def optlist (opts, default):
+    letters = []
+    for letter, desc in opts:
+        print '  [%s] %s' % (letter, desc)
+        letters.append(letter.upper() if letter == default else letter)
+    prompt = '[%s] ' % '/'.join(letters)
+    letters = [l.lower() for l in letters]
+    while True:
+        opt = raw_input(prompt).lower()
+        if len(opt) == 0:
+            return default
+        elif len(opt) == 1 and opt in letters:
+            return opt
+        print 'Please select one of ' + ', '.join(letters)
+
+def plural (noun, amount):
+    if hasattr(amount, '__len__'):
+        amount = len(amount)
+    return noun if amount == 1 else noun + 's'
+
+def uniqify(vs):
+    res = []
+    for v in vs:
+        seen = False
+        for r in res:
+            if r == v:
+                seen = True
+                break
+        if not seen:
+            res.append(v)
+    return res
+
+def qualified_name (pkg):
+    return '%s:%s' % (pkg['Package'], pkg['Architecture'])
+
+def parse_dpkg ():
+    fd = open('/var/lib/dpkg/status')
+    pkgs = []
+    pkg = {}
+    must_fix = []
+
+    for line in fd:
+        line = line.rstrip('\n')
+        if not line:
+            # assert that the package is sane
+            # info:
+            #   http://www.fifi.org/doc/libapt-pkg-doc/dpkg-tech.html/ch1.html
+            want, flag, status = pkg['Status'].split()
+            if any([flag != 'ok',
+                    want not in ('install', 'deinstall'),
+                    status not in ('installed', 'config-files'),
+                   ]):
+                must_fix.append(pkg)
+
+            pkgs.append(pkg)
+            pkg = {}
+            continue
+
+        if line[0] == ' ':
+            val += '\n' + line
+        else:
+            key, val = line.split(':', 1)
+            val = val.lstrip(' ')
+
+        pkg[key] = val
+
+    if must_fix:
+        longest_name = max(len(qualified_name(pkg)) for pkg in must_fix)
+        longest_name = max(len('Package:'), longest_name)
+        fmt = '  %%-%ds  %%s' % longest_name
+        print 'I do not understand the status of these packages:'
+        print fmt % ('Package:', 'Status:')
+        for pkg in must_fix:
+            print fmt % (qualified_name(pkg), pkg['Status'])
+        print 'You must resolve these issues'
+        sys.exit(1)
+
+    return pkgs
+
+def find_should_purge (pkgs):
+    should_purge = []
+    def abort(pkg):
+        raise Exception('Unexpected package status (%s: %s)' % \
+                        (qualified_name(pkg), pkg['Status']))
+
+    for pkg in pkgs:
+        # info: http://www.fifi.org/doc/libapt-pkg-doc/dpkg-tech.html/ch1.html
+        want, flag, status = pkg['Status'].split()
+        if flag != 'ok':
+            abort(pkg)
+        else:
+            if want == 'install' and status == 'installed':
+                continue
+            if want == 'deinstall' and status == 'config-files':
+                should_purge.append(pkg)
+            else:
+                abort(pkg)
+    return should_purge
+
+def is_installed (pkg):
+    return pkg['Status'] == 'install ok installed'
+
+def build_name_map (packages):
+    name_map = {}
+
+    def add (name, cur):
+        name_map.setdefault(name, []).append(cur)
+
+    for pkg in packages:
+        add(pkg['Package'], pkg)
+        if 'Provides' in pkg:
+            for alt_name in pkg['Provides'].split(', '):
+                add(alt_name, pkg)
+
+    return name_map
+
+def build_dependency_map (pkgs, name_map):
+    dependency_map = []
+
+    def find_satisfies (arch, name):
+        name = name.strip().split(' ')[0]
+
+        if name.endswith(':any'):
+            do_any = True
+            name = name[:-4]
+        else:
+            do_any = False
+
+        result = []
+
+        for candidate in name_map.get(name, []):
+            if candidate['Architecture'] == arch or \
+               candidate['Architecture'] == 'all' or \
+               arch == 'all' or \
+               candidate.get('Multi-Arch', 'no') == 'foreign' or \
+               candidate.get('Multi-Arch', 'no') == 'allowed' and do_any:
+                result.append(candidate)
+
+        return result
+
+    def add_dependencies(name, arch, depends):
+        depends = depends.strip()
+        if not depends:
+            return
+
+        for depend in depends.split(', '):
+            dependencies = []
+            for pkg in depend.split(' | '):
+                dependencies.extend(find_satisfies(arch, pkg))
+            assert len(dependencies) >= 1
+            dependency_map.append((name, uniqify(dependencies)))
+
+    for pkg in pkgs:
+        for n in ['Depends', 'Pre-Depends']:
+            add_dependencies(qualified_name(pkg),
+                             pkg['Architecture'],
+                             pkg.get(n, ''))
+
+    return dependency_map
+
+allowed_chars = set(string.letters + string.digits + '-*+.:')
+def convert_to_regex(line, python = True):
+    assert allowed_chars.issuperset(line)
+    line = line.replace('+', '\\+')
+    line = line.replace('*', '.*')
+    if python:
+        if ':' not in line:
+            line += ':.*'
+        return '(?:' + line + ')'
+    else:
+        return '^' + line + '$'
+
+def get_regexes(filename, python = True):
+    lines = []
+    for line in open(filename):
+        line = line.strip()
+        if not line:
+            continue
+        lines.append(convert_to_regex(line, python))
+    return lines
+
+def do_system (cmd):
+    ret = os.system(cmd)
+    if ret != 0:
+        sys.exit(ret)
+
+def name_list (pkgs):
+    return ' '.join(pkg if isinstance(pkg, str) else qualified_name(pkg) \
+                    for pkg in pkgs)
+
+def do_purge (*pkgs):
+    do_system('sudo apt-get purge %s' % name_list(pkgs))
+
+def do_install (*pkgs):
+    do_system('sudo apt-get install --no-install-recommends %s' % \
+              name_list(pkgs))
+
+def read_list (lst):
+    filename = '%s/%s.pkgs' % (os.path.dirname(__file__), lst)
+    if not os.path.exists(filename):
+        return [(None, '\n')]
+    out = []
+    with open(filename) as fd:
+        linum = 1
+        for orig_line in fd:
+            if not orig_line.endswith('\n'):
+                orig_line = orig_line + '\n'
+            line = orig_line.strip()
+            if '#' in line:
+                line = line.split('#')[0].strip()
+            if not allowed_chars.issuperset(line):
+                die('Malformed package name (%s:%d):\n  "%s"' % \
+                    (filename,
+                     linum,
+                     line))
+            if line == '':
+                line = None
+            out.append((line, orig_line))
+            linum += 1
+    return out
+
+def write_list (lst, lines):
+    filename = '%s/%s.pkgs' % (os.path.dirname(__file__), lst)
+    with open(filename, 'w') as fd:
+        for _, orig_line in lines:
+            fd.write(orig_line)
+
+def pkgs_on_list (lines):
+    return [pkg for pkg, _ in lines if pkg]
+
+def del_from_list (pkg, lines):
+    for i in range(len(lines)):
+        line, _ = lines[i]
+        if line == pkg:
+            lines.pop(i)
+            return
+
+def add_to_list (pkg, lines):
+    lines.append((pkg, pkg + '\n'))
+
+def get_installed():
+    # Get the packages
+    pkgs = parse_dpkg()
+
+    # We only care about installed files
+    i = 0
+    while i < len(pkgs):
+        pkg = pkgs[i]
+        if not is_installed(pkg):
+            pkgs.pop(i)
+        else:
+            i += 1
+
+    # Get list of all installed packages
+    installed = set()
+    for pkg in pkgs:
+        installed.add(pkg['Package'])
+        installed.add(qualified_name(pkg))
+
+    return installed
+
+def step_deinstall ():
+    # Get the installed packages
+    pkgs = parse_dpkg()
+
+    # If we have de-installed packages, fix that first
+    should_purge = find_should_purge(pkgs)
+    if should_purge and \
+       yesno('You have %d un-purged %s;  Purge now?' % \
+             (len(should_purge), plural('package', should_purge)),
+             True):
+        do_purge(*should_purge)
+
+def step_dowant ():
+    # Handle wanted but not installed packages
+    dowant_list = read_list('dowant')
+
+    def get_to_install():
+        installed = get_installed()
+        to_install = []
+        for pkg in pkgs_on_list(dowant_list):
+            if '*' in pkg:
+                die('Wildcards not allowed in dowant.pkgs')
+            if pkg not in installed:
+                to_install.append(pkg)
+        return to_install
+
+    to_install = get_to_install()
+    if to_install:
+        print 'You have %d un-installed but wanted %s;  What do?' % \
+            (len(to_install), plural('package', to_install))
+        while True:
+            opt = optlist([('i', 'Install all wanted packages'),
+                           ('a', 'Ask me about each package individually'),
+                           ('c', 'Continue without installing anything'),
+                           ('l', 'List packages'),
+                          ], 'i')
+            if   opt == 'i':
+                do_install(*to_install)
+                break
+            elif opt == 'c':
+                break
+            elif opt == 'a':
+                while to_install:
+                    pkg = to_install[0]
+                    print 'Package: %s' % pkg
+                    opt = optlist([('i', 'Install'),
+                                   ('n', 'Do nothing'),
+                                   ('r', 'Remove from wanted packages'),
+                                  ], 'i')
+                    if   opt == 'i':
+                        do_install(pkg)
+                        # Other packages might be pulled in as dependencies
+                        to_install = get_to_install()
+                    elif opt == 'n':
+                        pass
+                    elif opt == 'r':
+                        del_from_list(pkg, dowant_list)
+                        write_list('dowant', dowant_list)
+                break
+            elif opt == 'l':
+                print 'Wanted but not installed:'
+                for pkg in to_install:
+                    print '  %s' % pkg
+                print 'What do?'
+
+def step_delete ():
+    # Handle unwanted but installed packages
+    delete_list = read_list('delete')
+
+    def get_to_delete():
+        installed = get_installed()
+        to_delete = []
+        for pkg in pkgs_on_list(delete_list):
+            if '*' in pkg:
+                die('Wildcards not allowed in delete.pkgs')
+            if pkg in installed:
+                to_delete.append(pkg)
+        return to_delete
+
+    to_delete = get_to_delete()
+    if to_delete:
+        print 'You have %d installed but unwanted %s;  What do?' % \
+            (len(to_delete), plural('package', to_delete))
+        while True:
+            opt = optlist([('d', 'Delete all unwanted packages'),
+                           ('a', 'Ask me about each package individually'),
+                           ('c', 'Continue without deleting anything'),
+                           ('l', 'List packages'),
+                          ], 'd')
+            if   opt == 'd':
+                do_purge(*to_delete)
+                break
+            elif opt == 'c':
+                break
+            elif opt == 'a':
+                while to_delete:
+                    pkg = to_delete[0]
+                    print 'Package: %s' % pkg
+                    opt = optlist([('d', 'Install'),
+                                   ('n', 'Do nothing'),
+                                   ('r', 'Remove from unwanted packages'),
+                                  ], 'd')
+                    if   opt == 'd':
+                        do_purge(pkg)
+                        # Other packages might be purged as well
+                        to_delete = get_to_delete()
+                    elif opt == 'n':
+                        pass
+                    elif opt == 'r':
+                        del_from_list(pkg, delete_list)
+                        write_list('delete', delete_list)
+                break
+            elif opt == 'l':
+                print 'Unwanted but installed:'
+                for pkg in to_delete:
+                    print '  %s' % pkg
+                print 'What do?'
+
+def step_decide ():
+    # Get the packages
+    pkgs = parse_dpkg()
+
+    # We only care about installed files
+    i = 0
+    while i < len(pkgs):
+        pkg = pkgs[i]
+        if not is_installed(pkg):
+            pkgs.pop(i)
+        else:
+            i += 1
+    # The installed packages all have a qualified name
+    # e.g. "python-scipy:amd64". However other packages will only refer to
+    # the package as either "python-scipy" or "python-scipy:any". They might
+    # also refer to the packages by their virtual names such as
+    # "python-numpy-abi9" instead of "python-numpy". So we build a
+    # many-to-many relation mapping names to packages.
+    name_map = build_name_map(pkgs)
+
+    # From this many-to-many relation we build the dependency graph.  For
+    # instance we might have that pkg0 would have a dependency of the format
+    # (pkg1 | pkg2 | pkg3), (pkg4 | pkg5).  In this example, we might return
+    #
+    #   [(pkg0:i386, [pkg1-gtk:i386, pkg1-curses:i386, pkg3:all]),
+    #    (pkg0, [pkg4:i386])]
+    #
+    # Where the first element of the tuple is a string and the elements of
+    # the lists are dictionaries
+    deps_map = build_dependency_map(pkgs, name_map)
+
+    # Try to figure out which packages are needed.
+    # Currently we simply find all dependencies with only
+    # a single clause and mark them as "needed".
+    # I do not know if there is something smarter to do.
+    for _, deps in deps_map:
+        if len(deps) == 1:
+            deps[0]['NEEDED'] = True
+
+    # Mark packages on either of the wanted, ignore or remind lists as needed
+    dowant_list = read_list('dowant')
+    ignore_list = read_list('ignore')
+    remind_list = read_list('remind')
+    delete_list = read_list('delete')
+    ok_pkgs = map(convert_to_regex,
+                  pkgs_on_list(dowant_list) + \
+                  pkgs_on_list(ignore_list) + \
+                  pkgs_on_list(remind_list))
+    regex = re.compile('^%s$' % '|'.join(ok_pkgs))
+    for pkg in pkgs:
+        if regex.match(qualified_name(pkg)):
+            pkg['NEEDED'] = True
+
+    for pkg in pkgs:
+        if not pkg.get('NEEDED'):
+            print 'Package %s is installed;  Why?' % qualified_name(pkg)
+            opt = optlist([('w', 'I want this package'),
+                           ('i', 'Ignore this package'),
+                           ('r', 'Remind me of this package later'),
+                           ('d', 'Good question; delete this package'),
+                          ], 'r')
+            if   opt == 'w':
+                add_to_list(qualified_name(pkg), dowant_list)
+                write_list('dowant', dowant_list)
+            elif opt == 'i':
+                add_to_list(qualified_name(pkg), ignore_list)
+                write_list('ignore', ignore_list)
+            elif opt == 'r':
+                add_to_list(qualified_name(pkg), remind_list)
+                write_list('remind', remind_list)
+            elif opt == 'd':
+                do_purge(pkg)
+                add_to_list(qualified_name(pkg), delete_list)
+                write_list('delete', delete_list)
+                # re-parse -- this is a huge hack, but hey this option should
+                # never be chosen anyway
+                step_decide()
+                return
+
+def main ():
+    step_deinstall()
+    step_dowant()
+    step_delete()
+    step_decide()
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print
+    except EOFError:
+        print '^D'
