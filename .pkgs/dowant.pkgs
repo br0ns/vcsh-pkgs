@@ -1,0 +1,31 @@
+# editor
+emacs
+emacs-goodies-el
+
+# browser
+chromium
+
+# pdf reader
+zathura
+
+# screen lock (slock)
+suckless-tools
+
+# notification daemon
+dunst
+
+# volume daemon
+xfce4-volumed
+
+# virtualbox
+virtualbox-ose
+
+# password manager
+pass
+
+# utilities
+dtrx
+iputils-ping
+autojump
+
+# ALL BELOW THIS LINE ADDED BY `check-pkgs`

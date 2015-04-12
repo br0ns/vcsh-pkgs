@@ -3,3 +3,4 @@
 !/.gitignore.d/packages
 !/.pkgs
 !/.pkgs/check-pkgs
+!/.pkgs/dowant.pkgs
