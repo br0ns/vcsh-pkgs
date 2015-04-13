@@ -51,3 +51,9 @@ strace:amd64
 dbus-x11:amd64
 fonts-liberation:all
 ipython:all
+gtk2-engines-murrine:amd64
+xclip:amd64
+unison:amd64
+gnupg-agent:amd64
+xdotool:amd64
+tango-icon-theme:all
