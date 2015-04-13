@@ -17,15 +17,26 @@ dunst
 # volume daemon
 xfce4-volumed
 
-# virtualbox
-virtualbox-ose
-
 # password manager
 pass
 
-# utilities
+# firewall
+ufw
+
+# misc
+virtualbox-ose
+coreutils
+git
+gnupg
+netcat-openbsd
+ssh
+vcsh
+wget
+curl
+textlive-full
 dtrx
 iputils-ping
 autojump
+pm-utils
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`

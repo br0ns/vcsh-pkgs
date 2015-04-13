@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-import sys, copy, re, os, string, argparse
+import sys, copy, re, os, string, argparse, subprocess
 
 def die (s = '', exit_code = 1):
     print >>sys.stderr, s
@@ -16,6 +16,16 @@ def yesno (s, default):
         if opt in ('no', 'n'):
             return False
         print 'Please answer yes or no'
+
+def number (s, default):
+    prompt = '%s [%d]: ' % (s, default)
+    while True:
+        opt = raw_input(prompt)
+        if opt == '':
+            return default
+        elif opt.isdigit():
+            return int(opt)
+        print 'Please type number'
 
 def optlist (opts, default):
     letters = []
@@ -238,6 +248,13 @@ def read_list (lst):
             linum += 1
     return out
 
+def show_list (lst):
+    out = []
+    for line, _ in read_list(lst):
+        if line:
+            out.append(line)
+    return '\n'.join(out)
+
 def write_list (lst, lines):
     filename = '%s/%s.pkgs' % (os.path.dirname(__file__), lst)
     with open(filename, 'w') as fd:
@@ -277,6 +294,42 @@ def get_installed():
         installed.add(qualified_name(pkg))
 
     return installed
+
+def step_crontab ():
+    proc = subprocess.Popen(['crontab', '-l'],
+                            stdin = subprocess.PIPE,
+                            stdout = subprocess.PIPE,
+                            stderr = subprocess.PIPE)
+    crontab, _ = proc.communicate()
+    if 'remind-pkgs' not in crontab:
+        if not yesno('There is no crontab to remind you of orphaned packages;' \
+                     ' Install now?', True):
+            return
+        crontab = crontab.strip()
+        if crontab:
+            crontab = crontab.split('\n')
+        else:
+            crontab = []
+        print 'How often should you be reminded?'
+        when = optlist([('h', 'Hourly'),
+                        ('d', 'Daily'),
+                        ('w', 'Weekly'),
+                        ('m', 'Monthly'),
+                        ('r', 'After each reboot'),
+                        ], 'w')
+        when = {'h': '@hourly',
+                'd': '@daily',
+                'w': '@weekly',
+                'm': '@monthly',
+                'r': '@reboot',
+                }[when]
+        here = os.path.realpath(os.path.dirname(__file__))
+        crontab.append('%s %s/remind-pkgs' % (when, here))
+        proc = subprocess.Popen(['crontab', '-'],
+                                stdin = subprocess.PIPE,
+                                stdout = subprocess.PIPE,
+                                stderr = subprocess.PIPE)
+        proc.communicate('\n'.join(crontab) + '\n')
 
 def step_deinstall ():
     # Get the installed packages
@@ -396,7 +449,7 @@ def step_delete ():
                     print '  %s' % pkg
                 print 'What do?'
 
-def step_decide ():
+def get_orphaned ():
     # Get the packages
     pkgs = parse_dpkg()
 
@@ -449,8 +502,21 @@ def step_decide ():
         if regex.match(qualified_name(pkg)):
             pkg['NEEDED'] = True
 
-    for pkg in pkgs:
-        if not pkg.get('NEEDED'):
+    return [pkg for pkg in pkgs if not pkg.get('NEEDED')]
+
+def step_decide ():
+    dowant_list = read_list('dowant')
+    ignore_list = read_list('ignore')
+    remind_list = read_list('remind')
+    delete_list = read_list('delete')
+    pkgs = get_orphaned()
+
+    while pkgs:
+        if len(pkgs) > 1:
+            print 'You have %d orphaned %s' % \
+                (len(pkgs), plural('package', pkgs))
+
+        for pkg in pkgs:
             print 'Package %s is installed;  Why?' % qualified_name(pkg)
             opt = optlist([('w', 'I want this package'),
                            ('i', 'Ignore this package'),
@@ -470,10 +536,13 @@ def step_decide ():
                 do_purge(pkg)
                 add_to_list(qualified_name(pkg), delete_list)
                 write_list('delete', delete_list)
-                # re-parse -- this is a huge hack, but hey this option should
-                # never be chosen anyway
-                step_decide()
-                return
+                # re-parse
+                pkgs = get_orphaned()
+                break
+
+def usage ():
+    print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % sys.argv[0]
+    sys.exit(1)
 
 def main ():
     # Drop privs to owner of this file
@@ -498,10 +567,21 @@ def main ():
     pidfile.seek(0)
 
     # And go!
-    step_deinstall()
-    step_dowant()
-    step_delete()
-    step_decide()
+    if len(sys.argv) == 1:
+        step_crontab()
+        step_deinstall()
+        step_dowant()
+        step_delete()
+        step_decide()
+    elif len(sys.argv) == 3 and sys.argv[1] == '--list':
+        if   sys.argv[2] == 'orphaned':
+            print '\n'.join(qualified_name(pkg) for pkg in get_orphaned())
+        elif sys.argv[2] in ('dowant', 'ignore', 'remind', 'delete'):
+            print show_list(sys.argv[2])
+        else:
+            usage()
+    else:
+        usage()
 
 if __name__ == '__main__':
     try:
