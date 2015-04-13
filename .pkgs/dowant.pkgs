@@ -24,7 +24,7 @@ pass
 ufw
 
 # misc
-virtualbox-ose
+virtualbox
 coreutils
 git
 gnupg
@@ -33,10 +33,21 @@ ssh
 vcsh
 wget
 curl
-textlive-full
+texlive-full
 dtrx
 iputils-ping
 autojump
 pm-utils
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
+xdm:amd64
+bash-completion:all
+psmisc:amd64
+feh:amd64
+dmz-cursor-theme:all
+xcompmgr:amd64
+libnotify-bin:amd64
+strace:amd64
+dbus-x11:amd64
+fonts-liberation:all
+ipython:all
