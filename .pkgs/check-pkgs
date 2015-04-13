@@ -511,34 +511,39 @@ def step_decide ():
     delete_list = read_list('delete')
     pkgs = get_orphaned()
 
-    while pkgs:
-        if len(pkgs) > 1:
-            print 'You have %d orphaned %s' % \
-                (len(pkgs), plural('package', pkgs))
+    if len(pkgs) > 1:
+        print 'You have %d orphaned %s' % \
+            (len(pkgs), plural('package', pkgs))
 
-        for pkg in pkgs:
-            print 'Package %s is installed;  Why?' % qualified_name(pkg)
-            opt = optlist([('w', 'I want this package'),
-                           ('i', 'Ignore this package'),
-                           ('r', 'Remind me of this package later'),
-                           ('d', 'Good question; delete this package'),
-                          ], 'r')
-            if   opt == 'w':
-                add_to_list(qualified_name(pkg), dowant_list)
-                write_list('dowant', dowant_list)
-            elif opt == 'i':
-                add_to_list(qualified_name(pkg), ignore_list)
-                write_list('ignore', ignore_list)
-            elif opt == 'r':
+    while pkgs:
+        pkg = pkgs.pop()
+        print 'Package %s is installed;  Why?' % qualified_name(pkg)
+        opt = optlist([('w', 'I want this package'),
+                       ('i', 'Ignore this package'),
+                       ('r', 'Remind me of this package later'),
+                       ('l', 'I said later!  Remind me of everything later'),
+                       ('d', 'Good question; delete this package'),
+                      ], 'r')
+        if   opt == 'w':
+            add_to_list(qualified_name(pkg), dowant_list)
+            write_list('dowant', dowant_list)
+        elif opt == 'i':
+            add_to_list(qualified_name(pkg), ignore_list)
+            write_list('ignore', ignore_list)
+        elif opt == 'r':
+            add_to_list(qualified_name(pkg), remind_list)
+            write_list('remind', remind_list)
+        elif opt == 'l':
+            for pkg in pkgs:
                 add_to_list(qualified_name(pkg), remind_list)
-                write_list('remind', remind_list)
-            elif opt == 'd':
-                do_purge(pkg)
-                add_to_list(qualified_name(pkg), delete_list)
-                write_list('delete', delete_list)
-                # re-parse
-                pkgs = get_orphaned()
-                break
+            write_list('remind', remind_list)
+            break
+        elif opt == 'd':
+            do_purge(pkg)
+            add_to_list(qualified_name(pkg), delete_list)
+            write_list('delete', delete_list)
+            # re-parse
+            pkgs = get_orphaned()
 
 def usage ():
     print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % sys.argv[0]
