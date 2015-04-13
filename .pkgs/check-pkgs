@@ -523,6 +523,7 @@ def step_decide ():
                        ('r', 'Remind me of this package later'),
                        ('l', 'I said later!  Remind me of everything later'),
                        ('d', 'Good question; delete this package'),
+                       ('x', 'Purge every orphaned package!'),
                       ], 'r')
         if   opt == 'w':
             add_to_list(qualified_name(pkg), dowant_list)
@@ -544,21 +545,34 @@ def step_decide ():
             write_list('delete', delete_list)
             # re-parse
             pkgs = get_orphaned()
+        elif opt == 'x':
+            if not yesno('Are you sure about this?  I will delete recursively' \
+                         ', you know.', False):
+                continue
+            while pkgs:
+                for pkg in pkgs:
+                    do_purge(pkg)
+                    add_to_list(qualified_name(pkg), delete_list)
+                # re-parse
+                pkgs = get_orphaned()
+            write_list('delete', delete_list)
+            break
 
 def usage ():
-    print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % sys.argv[0]
+    print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % \
+        sys.argv[0]
     print
     print 'Pro tip:'
-    print '  $ echo \'DPkg::Post-Invoke {"PATH/TO/THIS/SCRIPT";};\' > /etc/apt/apt.conf.d/99check-pkgs'
+    print '  $ echo \'DPkg::Post-Invoke {"PATH/TO/THIS/SCRIPT";};\' > ' \
+          '/etc/apt/apt.conf.d/99check-pkgs'
     sys.exit(1)
 
 def main ():
     # Drop privs to owner of this file
     uid = os.stat(__file__).st_uid
-    gid = os.stat(__file__).st_gid
     if os.getuid() != uid:
-        os.setgid(gid)
-        os.setuid(uid)
+        os.setegid(os.stat(__file__).st_gid)
+        os.seteuid(uid)
 
     # Claim PID file
     import fcntl
