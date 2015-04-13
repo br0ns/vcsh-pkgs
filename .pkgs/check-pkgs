@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-import sys, copy, re, os, string, argparse, subprocess
+import sys, copy, re, os, string, argparse, subprocess, pwd, fcntl
 
 def die (s = '', exit_code = 1):
     print >>sys.stderr, s
@@ -296,7 +296,8 @@ def get_installed():
     return installed
 
 def step_crontab ():
-    proc = subprocess.Popen(['crontab', '-l'],
+    user = pwd.getpwuid(os.geteuid()).pw_name
+    proc = subprocess.Popen(['crontab', '-u', user, '-l'],
                             stdin = subprocess.PIPE,
                             stdout = subprocess.PIPE,
                             stderr = subprocess.PIPE)
@@ -325,7 +326,7 @@ def step_crontab ():
                 }[when]
         here = os.path.realpath(os.path.dirname(__file__))
         crontab.append('%s %s/remind-pkgs' % (when, here))
-        proc = subprocess.Popen(['crontab', '-'],
+        proc = subprocess.Popen(['crontab', '-u', user, '-'],
                                 stdin = subprocess.PIPE,
                                 stdout = subprocess.PIPE,
                                 stderr = subprocess.PIPE)
@@ -575,7 +576,6 @@ def main ():
         os.seteuid(uid)
 
     # Claim PID file
-    import fcntl
     pidfile = open('/tmp/check-pkgs.pid', 'a+')
     try:
         fcntl.flock(pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
