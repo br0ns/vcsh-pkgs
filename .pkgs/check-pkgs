@@ -542,6 +542,9 @@ def step_decide ():
 
 def usage ():
     print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % sys.argv[0]
+    print
+    print 'Pro tip:'
+    print '  $ echo \'DPkg::Post-Invoke {"PATH/TO/THIS/SCRIPT";};\' > /etc/apt/apt.conf.d/99check-pkgs'
     sys.exit(1)
 
 def main ():
