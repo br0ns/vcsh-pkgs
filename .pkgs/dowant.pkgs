@@ -57,3 +57,4 @@ unison:amd64
 gnupg-agent:amd64
 xdotool:amd64
 tango-icon-theme:all
+python-pip:all
