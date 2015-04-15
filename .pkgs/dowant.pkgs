@@ -15,7 +15,6 @@ suckless-tools
 dunst
 
 # volume daemon
-xfce4-volumed
 
 # password manager
 pass
@@ -60,3 +59,5 @@ tango-icon-theme:all
 python-pip:all
 mplayer2:amd64
 rlwrap:amd64
+autocutsel:amd64
+alsa-utils:amd64

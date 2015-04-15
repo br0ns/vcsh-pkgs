@@ -5,8 +5,12 @@ def die (s = '', exit_code = 1):
     print >>sys.stderr, s
     sys.exit(exit_code)
 
+def emph(s):
+    return '\x1b[32m%s\x1b[m' % s
+
 def yesno (s, default):
-    prompt = '%s [%s]: ' % (s, 'Y/n' if default else 'y/N')
+    optlist = emph('Y') + '/n' if default else 'y/' + emph('N')
+    prompt = '%s [%s]: ' % (s, optlist)
     while True:
         opt = raw_input(prompt).lower()
         if opt == '':
@@ -17,30 +21,56 @@ def yesno (s, default):
             return False
         print 'Please answer yes or no'
 
-def number (s, default):
+def number (s, default, range = None):
     prompt = '%s [%d]: ' % (s, default)
     while True:
         opt = raw_input(prompt)
         if opt == '':
             return default
         elif opt.isdigit():
-            return int(opt)
-        print 'Please type number'
+            opt = int(opt)
+            if not range or (opt >= range[0] and opt <= range[1]):
+                return int(opt)
+        s = 'Please type a number'
+        if range:
+            s += ' (%d -- %d)' % (range[0], range[1])
+        print s
 
-def optlist (opts, default):
-    letters = []
-    for letter, desc in opts:
-        print '  [%s] %s' % (letter, desc)
-        letters.append(letter.upper() if letter == default else letter)
-    prompt = '[%s] ' % '/'.join(letters)
-    letters = [l.lower() for l in letters]
+def optlist (opts, default, numbers = False):
+    if isinstance(default, (int, long)):
+        default = opts[default][0]
+
+    abbrevs = [abbr for abbr, _ in opts]
+
+    optlst = []
+    abbrlen = max(map(len, abbrevs))
+    numlen = len(str(len(opts) - 1))
+    for i, (abbr, desc) in enumerate(opts):
+        if numbers:
+            lbl = '[%s:%s]' % (str(i).ljust(numlen), abbr)
+            lbl = lbl.ljust(numlen + abbrlen + 3)
+        else:
+            lbl = '[%s]' % abbr
+            lbl = lbl.ljust(abbrlen + 2)
+        print '  %s %s' % (lbl, desc)
+        optlst.append(emph(abbr) if abbr == default else abbr)
+
+    prompt = '[%s] ' % '/'.join(optlst)
+
     while True:
-        opt = raw_input(prompt).lower()
+        opt = raw_input(prompt)
         if len(opt) == 0:
             return default
-        elif len(opt) == 1 and opt in letters:
+        elif opt in abbrevs:
             return opt
-        print 'Please select one of ' + ', '.join(letters)
+        elif opt.isdigit():
+            try:
+                opt = abbrevs[int(opt)]
+                if opt in abbrevs:
+                    return opt
+            except:
+                pass
+        print 'Please select one of ' + ', '.join(abbrevs)
 
 def plural (noun, amount):
     if hasattr(amount, '__len__'):
@@ -521,10 +551,13 @@ def step_decide ():
         print 'Package %s is installed;  Why?' % qualified_name(pkg)
         opt = optlist([('w', 'I want this package'),
                        ('i', 'Ignore this package'),
+                       ('l', 'List orphaned packages'),
                        ('r', 'Remind me of this package later'),
-                       ('l', 'I said later!  Remind me of everything later'),
+                       ('R', 'I said later!  Remind me of everything later'),
                        ('d', 'Good question; delete this package'),
-                       ('x', 'Purge every orphaned package!'),
+                       ('D', 'Delete every orphaned package!'),
+                       ('u', 'Delete this package and mark is as un-wanted'),
+                       ('U', 'Delete and mark every orphaned package as un-wanted'),
                       ], 'r')
         if   opt == 'w':
             add_to_list(qualified_name(pkg), dowant_list)
@@ -532,31 +565,38 @@ def step_decide ():
         elif opt == 'i':
             add_to_list(qualified_name(pkg), ignore_list)
             write_list('ignore', ignore_list)
+        elif opt == 'l':
+            print '\n'.join([pkg] + pkgs)
         elif opt == 'r':
             add_to_list(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
-        elif opt == 'l':
+        elif opt == 'R':
+            pkgs.append(pkg)
             for pkg in pkgs:
                 add_to_list(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
             break
-        elif opt == 'd':
+        elif opt in ('d', 'u'):
             do_purge(pkg)
-            add_to_list(qualified_name(pkg), delete_list)
-            write_list('delete', delete_list)
+            if opt == 'u':
+                add_to_list(qualified_name(pkg), delete_list)
+                write_list('delete', delete_list)
             # re-parse
             pkgs = get_orphaned()
-        elif opt == 'x':
+        elif opt == ('D', 'U'):
             if not yesno('Are you sure about this?  I will delete recursively' \
                          ', you know.', False):
                 continue
+            pkgs.append(pkg)
             while pkgs:
                 for pkg in pkgs:
                     do_purge(pkg)
-                    add_to_list(qualified_name(pkg), delete_list)
+                    if opt == 'U':
+                        add_to_list(qualified_name(pkg), delete_list)
                 # re-parse
                 pkgs = get_orphaned()
-            write_list('delete', delete_list)
+            if opt == 'U':
+                write_list('delete', delete_list)
             break
 
 def usage ():
