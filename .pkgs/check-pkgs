@@ -566,7 +566,7 @@ def step_decide ():
             add_to_list(qualified_name(pkg), ignore_list)
             write_list('ignore', ignore_list)
         elif opt == 'l':
-            print '\n'.join([pkg] + pkgs)
+            print '\n'.join(map(qualified_name, [pkg] + pkgs))
         elif opt == 'r':
             add_to_list(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)

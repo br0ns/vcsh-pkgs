@@ -3,4 +3,6 @@
 !/.gitignore.d/packages
 !/.pkgs
 !/.pkgs/check-pkgs
+!/.pkgs/delete.pkgs
 !/.pkgs/dowant.pkgs
+!/.pkgs/remind-pkgs
