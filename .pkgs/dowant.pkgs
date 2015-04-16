@@ -47,7 +47,7 @@ dmz-cursor-theme:all
 xcompmgr:amd64
 libnotify-bin:amd64
 strace:amd64
-dbus-x11:amd64
+dbus:amd64
 fonts-liberation:all
 ipython:all
 gtk2-engines-murrine:amd64
@@ -61,3 +61,8 @@ mplayer2:amd64
 rlwrap:amd64
 autocutsel:amd64
 alsa-utils:amd64
+file:amd64
+zip:amd64
+libreadline6:i386
+virtualbox-dkms:all
+virtualbox-qt:amd64
