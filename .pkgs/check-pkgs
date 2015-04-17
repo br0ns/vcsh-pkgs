@@ -668,7 +668,7 @@ def step_decide ():
                 write_list('delete', delete_list)
             # re-parse
             pkgs = get_orphaned()
-        elif opt == ('D', 'U'):
+        elif opt in ('D', 'U'):
             if not yesno('Are you sure about this?  I will delete recursively' \
                          ', you know.', False):
                 continue

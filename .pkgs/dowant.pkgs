@@ -24,6 +24,17 @@ gnupg-agent
 # firewall
 ufw
 
+# IDA
+libstdc++6:i386
+libglib2.0-0:i386
+libfreetype6:i386
+libsm6:i386
+libxrender1:i386
+libfontconfig1:i386
+libxext6:i386
+
+g++-multilib
+
 # misc
 virtualbox
 coreutils
@@ -68,3 +79,7 @@ virtualbox-dkms:all
 virtualbox-qt:amd64
 ltrace:amd64
 manpages-dev:all
+debootstrap:all
+apt-file:all
+subversion:amd64
+gtk2-engines-murrine:i386
