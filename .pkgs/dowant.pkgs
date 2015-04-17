@@ -67,3 +67,4 @@ libreadline6:i386
 virtualbox-dkms:all
 virtualbox-qt:amd64
 ltrace:amd64
+manpages-dev:all
