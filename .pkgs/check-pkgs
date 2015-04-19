@@ -171,7 +171,9 @@ def parse_dpkg ():
     pkg = {}
     must_fix = []
 
+    rawdata = ''
     for line in fd:
+        rawdata += line
         line = line.rstrip('\n')
         if not line:
             # assert that the package is sane
@@ -184,7 +186,9 @@ def parse_dpkg ():
                    ]):
                 must_fix.append(pkg)
 
+            pkg['__raw'] = rawdata
             pkgs.append(pkg)
+            rawdata = ''
             pkg = {}
             continue
 
@@ -633,9 +637,9 @@ def step_decide ():
     remind_list = read_list('remind')
     delete_list = read_list('delete')
 
-    n = can_autoremove()
-    if n and yesno('APT can autoremove %d packages;  Do it?' % n, True):
-        do_autoremove()
+    # n = can_autoremove()
+    # if n and yesno('APT can autoremove %d packages;  Do it?' % n, True):
+    #     do_autoremove()
 
     pkgs = get_orphaned()
 
@@ -649,6 +653,7 @@ def step_decide ():
         opt = optlist([('w', 'I want this package'),
                        ('i', 'Ignore this package'),
                        ('c', 'Continue without adding this package to any list'),
+                       ('?', 'Show APT\'s information about this package'),
                        ('l', 'List orphaned packages'),
                        ('r', 'Remind me of this package later'),
                        ('R', 'I said later!  Remind me of everything later'),
@@ -665,6 +670,9 @@ def step_decide ():
             write_list('ignore', ignore_list)
         elif opt == 'c':
             pass
+        elif opt == '?':
+            print pkg['__raw']
+            pkgs.append(pkg)
         elif opt == 'l':
             print '\n'.join(map(qualified_name, [pkg] + pkgs))
         elif opt == 'r':

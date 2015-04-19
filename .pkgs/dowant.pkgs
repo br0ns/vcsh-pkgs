@@ -33,8 +33,6 @@ libxrender1:i386
 libfontconfig1:i386
 libxext6:i386
 
-g++-multilib
-
 # misc
 virtualbox
 coreutils
@@ -82,4 +80,34 @@ manpages-dev:all
 debootstrap:all
 apt-file:all
 subversion:amd64
-gtk2-engines-murrine:i386
+gdb:amd64
+libpython2.7-dev:amd64
+gdbserver:amd64
+hexedit:amd64
+locate:amd64
+sed:amd64
+xorg:amd64
+wamerican:all
+lzma:amd64
+xosd-bin:amd64
+diffutils:amd64
+libxinerama-dev:amd64
+pngcheck:amd64
+execstack:amd64
+nano:amd64
+isc-dhcp-client:amd64
+e2fsprogs:amd64
+usbutils:amd64
+gzip:amd64
+cryptsetup:amd64
+ghc:amd64
+hostname:amd64
+cabal-install:amd64
+g++-multilib:amd64
+sudo:amd64
+time:amd64
+libxrandr-dev:amd64
+dosfstools:amd64
+grep:amd64
+pv:amd64
+less:amd64
