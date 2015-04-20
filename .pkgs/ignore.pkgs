@@ -17,3 +17,4 @@ console-setup:all
 locales:all
 ifupdown:amd64
 hostname:amd64
+firmware-iwlwifi:all

@@ -2,3 +2,4 @@ dbus:amd64
 discover:amd64
 netcat-traditional:amd64
 installation-report:all
+avahi-autoipd:amd64
