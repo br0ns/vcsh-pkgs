@@ -154,6 +154,7 @@ ltrace:amd64
 gdb:amd64
 gdbserver:amd64
 execstack:amd64
+build-essential:amd64
 
 
 ## Misc
