@@ -1,30 +1,32 @@
-# editor
-emacs
-emacs-goodies-el
+## Editors
+emacs:all
+emacs-goodies-el:all
+nano:amd64
 
-# browser
-chromium
 
-# pdf reader
-zathura
+## Browser
+chromium:amd64
+iceweasel:amd64
 
-# screen lock (slock)
-suckless-tools
 
-# notification daemon
-dunst
+## Latex and PDF things
+zathura:amd64
+pdftk:amd64
+texlive-full:all
 
-# volume daemon
 
-# password manager
-pass
-pinentry-gtk2
-gnupg-agent
+## Screen lock (slock)
+suckless-tools:amd64
 
-# firewall
-ufw
 
-# IDA
+## Password manager
+pass:all
+pinentry-gtk2:amd64
+gnupg-agent:amd64
+gnupg:amd64
+
+
+## IDA needs these to work
 libstdc++6:i386
 libglib2.0-0:i386
 libfreetype6:i386
@@ -33,81 +35,135 @@ libxrender1:i386
 libfontconfig1:i386
 libxext6:i386
 
-# misc
-virtualbox
-coreutils
-git
-gnupg
-netcat-openbsd
-ssh
-vcsh
-wget
-curl
-texlive-full
-dtrx
-iputils-ping
-autojump
-pm-utils
 
-# ALL BELOW THIS LINE ADDED BY `check-pkgs`
+## Networking
+traceroute:amd64
+isc-dhcp-client:amd64
+pv:amd64
+netcat-openbsd:amd64
+ssh:all
+nmap:amd64
+iputils-ping:amd64
+wget:amd64
+curl:amd64
+socat:amd64
+rsync:amd64
+whois:amd64
+openvpn:amd64
+
+
+## Xorg and other UI things
 xdm:amd64
-bash-completion:all
-psmisc:amd64
 feh:amd64
 dmz-cursor-theme:all
 xcompmgr:amd64
-libnotify-bin:amd64
-strace:amd64
 fonts-liberation:all
-ipython:all
 gtk2-engines-murrine:amd64
 xclip:amd64
-unison:amd64
 xdotool:amd64
 tango-icon-theme:all
-python-pip:all
-mplayer2:amd64
-rlwrap:amd64
 autocutsel:amd64
-alsa-utils:amd64
-file:amd64
-zip:amd64
+xorg:amd64
+xosd-bin:amd64
+
+
+## VCS
+git:amd64
+subversion:amd64
+vcsh:all
+
+
+## Libs (dev versions)
+# Needed to compile xmonad-contrib
+libxinerama-dev:amd64
+libxrandr-dev:amd64
+
+libpython2.7-dev:amd64
+
+
+## Libs
 libreadline6:i386
+g++-multilib:amd64
+
+# Needed by pwnlib
+libcapstone2:amd64
+
+
+## Virtualization
+virtualbox:amd64
 virtualbox-dkms:all
 virtualbox-qt:amd64
-ltrace:amd64
-manpages-dev:all
-debootstrap:all
-apt-file:all
-subversion:amd64
-gdb:amd64
-libpython2.7-dev:amd64
-gdbserver:amd64
-hexedit:amd64
-locate:amd64
-sed:amd64
-xorg:amd64
-wamerican:all
+
+
+## FS and package formats things
+dtrx:all
+zip:amd64
 lzma:amd64
-xosd-bin:amd64
-diffutils:amd64
-libxinerama-dev:amd64
-pngcheck:amd64
-execstack:amd64
-nano:amd64
-isc-dhcp-client:amd64
-e2fsprogs:amd64
-usbutils:amd64
 gzip:amd64
 cryptsetup:amd64
-ghc:amd64
-hostname:amd64
-cabal-install:amd64
-g++-multilib:amd64
-sudo:amd64
-time:amd64
-libxrandr-dev:amd64
 dosfstools:amd64
+e2fsprogs:amd64
+
+
+## CLI utilities
+sudo:amd64
+psmisc:amd64
+pngcheck:amd64
+rlwrap:amd64
+file:amd64
+time:amd64
 grep:amd64
-pv:amd64
 less:amd64
+apt-file:all
+locate:amd64
+sed:amd64
+diffutils:amd64
+
+
+## Shell
+autojump:all
+bash-completion:all
+
+
+## Docs
+manpages:all
+manpages-dev:all
+manpages-posix:all
+
+
+## Media
+mplayer2:amd64
+alsa-utils:amd64
+
+
+### Programming and debugging
+## Python
+python-pip:all
+ipython:all
+
+## C
+gcc:amd64
+
+## Haskell
+ghc:amd64
+cabal-install:amd64
+
+## Debugging and utils
+strace:amd64
+ltrace:amd64
+gdb:amd64
+gdbserver:amd64
+execstack:amd64
+
+
+## Misc
+coreutils:amd64
+pm-utils:all
+unison:amd64
+debootstrap:all
+hexedit:amd64
+wamerican:all
+usbutils:amd64
+
+
+# ALL BELOW THIS LINE ADDED BY `check-pkgs`

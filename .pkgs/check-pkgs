@@ -648,7 +648,7 @@ def step_decide ():
             (len(pkgs), plural('package', pkgs))
 
     while pkgs:
-        pkg = pkgs.pop()
+        pkg = pkgs[0]
         print 'Package %s is installed;  Why?' % qualified_name(pkg)
         opt = optlist([('w', 'I want this package'),
                        ('i', 'Ignore this package'),
@@ -672,14 +672,14 @@ def step_decide ():
             pass
         elif opt == '?':
             print pkg['__raw']
-            pkgs.append(pkg)
+            continue
         elif opt == 'l':
-            print '\n'.join(map(qualified_name, [pkg] + pkgs))
+            print '\n'.join(map(qualified_name, pkgs))
+            continue
         elif opt == 'r':
             add_to_list(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
         elif opt == 'R':
-            pkgs.append(pkg)
             for pkg in pkgs:
                 add_to_list(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
@@ -691,11 +691,11 @@ def step_decide ():
                 write_list('delete', delete_list)
             # re-parse
             pkgs = get_orphaned()
+            continue
         elif opt in ('D', 'U'):
             if not yesno('Are you sure about this?  I will delete recursively' \
                          ', you know.', False):
                 continue
-            pkgs.append(pkg)
             while pkgs:
                 for pkg in pkgs:
                     do_purge(pkg)
@@ -706,6 +706,7 @@ def step_decide ():
             if opt == 'U':
                 write_list('delete', delete_list)
             break
+        pkgs.pop(0)
 
 def usage ():
     print 'usage: %s [--list orphaned|dowant|ignore|remind|delete]' % \

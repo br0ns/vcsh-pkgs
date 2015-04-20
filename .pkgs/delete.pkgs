@@ -1,6 +1,4 @@
-dbus
+dbus:amd64
 discover:amd64
-python-dbus:amd64
 netcat-traditional:amd64
 installation-report:all
-debconf-i18n:all

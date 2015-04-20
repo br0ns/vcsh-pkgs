@@ -1,0 +1,19 @@
+xserver-xorg-video-all
+xserver-xorg-input-all
+fglrx-driver
+fglrx-modules-dkms
+network-manager
+
+## ALL BELOW THIS LINE ADDED BY `check-pkgs`
+login:amd64
+ncurses-base:all
+linux-image-amd64:amd64
+linux-headers-3.16.0-4-amd64:amd64
+os-prober:amd64
+init:amd64
+grub-pc:amd64
+dmidecode:amd64
+console-setup:all
+locales:all
+ifupdown:amd64
+hostname:amd64
