@@ -3,3 +3,4 @@ discover:amd64
 netcat-traditional:amd64
 installation-report:all
 avahi-autoipd:amd64
+ifupdown:amd64
