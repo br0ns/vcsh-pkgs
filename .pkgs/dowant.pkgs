@@ -37,8 +37,8 @@ libxext6:i386
 
 
 ## Networking
+udhcpc:amd64
 traceroute:amd64
-isc-dhcp-client:amd64
 pv:amd64
 netcat-openbsd:amd64
 ssh:all

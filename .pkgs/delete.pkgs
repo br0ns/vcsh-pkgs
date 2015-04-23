@@ -5,3 +5,4 @@ installation-report:all
 avahi-autoipd:amd64
 ifupdown:amd64
 acpid:amd64
+isc-dhcp-client:amd64
