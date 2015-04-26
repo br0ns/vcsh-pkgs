@@ -17,3 +17,5 @@ console-setup:all
 locales:all
 hostname:amd64
 firmware-iwlwifi:all
+libssl-dev:amd64
+python-lzma:amd64

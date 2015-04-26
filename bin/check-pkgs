@@ -1,5 +1,9 @@
 #!/usr/bin/env python2.7
-import sys, copy, re, os, string, argparse, subprocess, pwd, fcntl
+import sys, copy, re, os, string, argparse, subprocess, pwd, fcntl, time, atexit
+
+# Save package lists in ~/.pkgs/ where "~" refers to the home dir of the owner
+# of this file
+LIST_DIR = '%s/.pkgs/' % pwd.getpwuid(os.stat(__file__).st_uid).pw_dir
 
 def die (s = '', exit_code = 1):
     print >>sys.stderr, s
@@ -7,6 +11,75 @@ def die (s = '', exit_code = 1):
 
 def emph(s):
     return '\x1b[32m%s\x1b[m' % s
+
+def yesno (s, default):
+    optlist = emph('Y') + '/n' if default else 'y/' + emph('N')
+    prompt = '%s [%s]: ' % (s, optlist)
+    while True:
+        opt = raw_input(prompt).lower()
+        if opt == '':
+            return default
+        if opt in ('yes', 'y'):
+            return True
+        if opt in ('no', 'n'):
+            return False
+        print 'Please answer yes or no'
+
+def number (s, default, range = None):
+    prompt = '%s [%d]: ' % (s, default)
+    while True:
+        opt = raw_input(prompt)
+        if opt == '':
+            return default
+        elif opt.isdigit():
+            opt = int(opt)
+            if not range or (opt >= range[0] and opt <= range[1]):
+                return int(opt)
+        s = 'Please type a number'
+        if range:
+            s += ' (%d -- %d)' % (range[0], range[1])
+        print s
+
+def optlist (opts, default, numbers = False):
+    if isinstance(default, (int, long)):
+        default = opts[default][0]
+
+    abbrevs = [abbr for abbr, _ in opts]
+
+    optlst = []
+    abbrlen = max(map(len, abbrevs))
+    numlen = len(str(len(opts) - 1))
+    for i, (abbr, desc) in enumerate(opts):
+        if numbers:
+            lbl = '[%s:%s]' % (str(i).ljust(numlen), abbr)
+            lbl = lbl.ljust(numlen + abbrlen + 3)
+        else:
+            lbl = '[%s]' % abbr
+            lbl = lbl.ljust(abbrlen + 2)
+        print '  %s %s' % (lbl, desc)
+        optlst.append(emph(abbr) if abbr == default else abbr)
+
+    prompt = '[%s] ' % '/'.join(optlst)
+
+    while True:
+        opt = raw_input(prompt)
+        if len(opt) == 0:
+            return default
+        elif opt in abbrevs:
+            return opt
+        elif opt.isdigit():
+            try:
+                opt = abbrevs[int(opt)]
+                if opt in abbrevs:
+                    return opt
+            except:
+                pass
+        print 'Please select one of ' + ', '.join(abbrevs)
+
+def plural (noun, amount):
+    if hasattr(amount, '__len__'):
+        amount = len(amount)
+    return noun if amount == 1 else noun + 's'
 
 def parse_version(ver):
     if ':' in ver:
@@ -80,75 +153,6 @@ def version_compatible(ver1, op, ver2):
     }
 
     return cmps[op][version_compare(ver1, ver2)+1]
-
-def yesno (s, default):
-    optlist = emph('Y') + '/n' if default else 'y/' + emph('N')
-    prompt = '%s [%s]: ' % (s, optlist)
-    while True:
-        opt = raw_input(prompt).lower()
-        if opt == '':
-            return default
-        if opt in ('yes', 'y'):
-            return True
-        if opt in ('no', 'n'):
-            return False
-        print 'Please answer yes or no'
-
-def number (s, default, range = None):
-    prompt = '%s [%d]: ' % (s, default)
-    while True:
-        opt = raw_input(prompt)
-        if opt == '':
-            return default
-        elif opt.isdigit():
-            opt = int(opt)
-            if not range or (opt >= range[0] and opt <= range[1]):
-                return int(opt)
-        s = 'Please type a number'
-        if range:
-            s += ' (%d -- %d)' % (range[0], range[1])
-        print s
-
-def optlist (opts, default, numbers = False):
-    if isinstance(default, (int, long)):
-        default = opts[default][0]
-
-    abbrevs = [abbr for abbr, _ in opts]
-
-    optlst = []
-    abbrlen = max(map(len, abbrevs))
-    numlen = len(str(len(opts) - 1))
-    for i, (abbr, desc) in enumerate(opts):
-        if numbers:
-            lbl = '[%s:%s]' % (str(i).ljust(numlen), abbr)
-            lbl = lbl.ljust(numlen + abbrlen + 3)
-        else:
-            lbl = '[%s]' % abbr
-            lbl = lbl.ljust(abbrlen + 2)
-        print '  %s %s' % (lbl, desc)
-        optlst.append(emph(abbr) if abbr == default else abbr)
-
-    prompt = '[%s] ' % '/'.join(optlst)
-
-    while True:
-        opt = raw_input(prompt)
-        if len(opt) == 0:
-            return default
-        elif opt in abbrevs:
-            return opt
-        elif opt.isdigit():
-            try:
-                opt = abbrevs[int(opt)]
-                if opt in abbrevs:
-                    return opt
-            except:
-                pass
-        print 'Please select one of ' + ', '.join(abbrevs)
-
-def plural (noun, amount):
-    if hasattr(amount, '__len__'):
-        amount = len(amount)
-    return noun if amount == 1 else noun + 's'
 
 def uniqify(vs):
     res = []
@@ -332,8 +336,11 @@ def name_list (pkgs):
     return ' '.join(pkg if isinstance(pkg, str) else qualified_name(pkg) \
                     for pkg in pkgs)
 
-def do_purge (*pkgs):
-    do_system('sudo apt-get purge %s' % name_list(pkgs))
+def do_purge (*pkgs, **kwargs):
+    yes = kwargs.get('yes', False)
+    do_system('sudo apt-get purge %s %s' % \
+              (name_list(pkgs),
+               '--yes' if yes else ''))
 
 def do_install (*pkgs):
     do_system('sudo apt-get install --no-install-recommends %s' % \
@@ -347,14 +354,16 @@ def can_autoremove():
     return int(re.findall(r', (\d+) to remove ', s)[0])
 
 def read_list (lst):
-    filename = '%s/%s.pkgs' % (os.path.dirname(__file__), lst)
+    filename = '%s/%s.pkgs' % (LIST_DIR, lst)
     if not os.path.exists(filename):
-        return [(None, '\n')]
+        return []
     out = []
     with open(filename) as fd:
         linum = 1
         for orig_line in fd:
             if not orig_line.endswith('\n'):
+                if not orig_line and linum == 1:
+                    return []
                 orig_line = orig_line + '\n'
             line = orig_line.strip()
             if '#' in line:
@@ -375,13 +384,62 @@ def show_list (lst):
     for line, _ in read_list(lst):
         if line:
             out.append(line)
-    return '\n'.join(out)
+    return '\n'.join(sorted(out))
 
 def write_list (lst, lines):
-    filename = '%s/%s.pkgs' % (os.path.dirname(__file__), lst)
+    filename = '%s/%s.pkgs' % (LIST_DIR, lst)
     with open(filename, 'w') as fd:
         for _, orig_line in lines:
             fd.write(orig_line)
+
+def read_remind_list():
+    lst = read_list('remind')
+    out = []
+    for i in range(0, len(lst), 2):
+        _line, comment = lst[i]
+        here = 'on line %d in remind.pkgs' % i
+        if _line != None:
+            print 'Expected a comment', here
+            out = []
+            break
+        try:
+            remind_at = re.findall(
+                r'# Remind at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})',
+                comment)[0]
+        except:
+            print 'Malformed comment', here
+            out = []
+            break
+        try:
+            remind_at = time.mktime(time.strptime(remind_at,
+                                                  '%Y-%m-%d %H:%M:%S'))
+        except:
+            print 'Invalid data', here
+            out = []
+            break
+
+        pkg, _line = lst[i + 1]
+        here = 'on line %d in remind.pkgs' % (i + 1)
+        if not pkg:
+            print 'Expected a package name', here
+            out = []
+            break
+
+        if time.time() > remind_at:
+            continue
+
+        out += lst[i : i + 2]
+
+    if out != lst:
+        write_list('remind', out)
+    return out
+
+def add_reminder(pkg, lines):
+    remind_at = time.gmtime(time.time() + 60 * 60 * 24 * 5)
+    remind_at = time.strftime('%Y-%m-%d %H:%M:%S', remind_at)
+    line = '# Remind at %s\n' % remind_at
+    lines.append((None, line))
+    lines.append((pkg, pkg + '\n'))
 
 def pkgs_on_list (lines):
     return [pkg for pkg, _ in lines if pkg]
@@ -416,47 +474,6 @@ def get_installed():
         installed.add(qualified_name(pkg))
 
     return installed
-
-def step_crontab ():
-    user = pwd.getpwuid(os.geteuid()).pw_name
-    try:
-        proc = subprocess.Popen(['crontab', '-u', user, '-l'],
-                                stdin = subprocess.PIPE,
-                                stdout = subprocess.PIPE,
-                                stderr = subprocess.PIPE)
-    except OSError:
-        print "You do not not appear to have cron"
-        return
-    crontab, _ = proc.communicate()
-    if 'remind-pkgs' not in crontab:
-        if not yesno('There is no crontab to remind you of orphaned packages;' \
-                     ' Install now?', True):
-            return
-        crontab = crontab.strip()
-        if crontab:
-            crontab = crontab.split('\n')
-        else:
-            crontab = []
-        print 'How often should you be reminded?'
-        when = optlist([('h', 'Hourly'),
-                        ('d', 'Daily'),
-                        ('w', 'Weekly'),
-                        ('m', 'Monthly'),
-                        ('r', 'After each reboot'),
-                        ], 'w')
-        when = {'h': '@hourly',
-                'd': '@daily',
-                'w': '@weekly',
-                'm': '@monthly',
-                'r': '@reboot',
-                }[when]
-        here = os.path.realpath(os.path.dirname(__file__))
-        crontab.append('%s %s/remind-pkgs' % (when, here))
-        proc = subprocess.Popen(['crontab', '-u', user, '-'],
-                                stdin = subprocess.PIPE,
-                                stdout = subprocess.PIPE,
-                                stderr = subprocess.PIPE)
-        proc.communicate('\n'.join(crontab) + '\n')
 
 def step_deinstall ():
     # Get the installed packages
@@ -556,7 +573,7 @@ def step_delete ():
                 while to_delete:
                     pkg = to_delete.pop(0)
                     print 'Package: %s' % pkg
-                    opt = optlist([('d', 'Install'),
+                    opt = optlist([('d', 'Delete'),
                                    ('n', 'Do nothing'),
                                    ('r', 'Remove from unwanted packages'),
                                   ], 'd')
@@ -618,7 +635,7 @@ def get_orphaned ():
     # Mark packages on either of the wanted, ignore or remind lists as needed
     dowant_list = read_list('dowant')
     ignore_list = read_list('ignore')
-    remind_list = read_list('remind')
+    remind_list = read_remind_list()
     delete_list = read_list('delete')
     ok_pkgs = map(convert_to_regex,
                   pkgs_on_list(dowant_list) + \
@@ -634,7 +651,7 @@ def get_orphaned ():
 def step_decide ():
     dowant_list = read_list('dowant')
     ignore_list = read_list('ignore')
-    remind_list = read_list('remind')
+    remind_list = read_remind_list()
     delete_list = read_list('delete')
 
     # n = can_autoremove()
@@ -677,11 +694,11 @@ def step_decide ():
             print '\n'.join(map(qualified_name, pkgs))
             continue
         elif opt == 'r':
-            add_to_list(qualified_name(pkg), remind_list)
+            add_reminder(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
         elif opt == 'R':
             for pkg in pkgs:
-                add_to_list(qualified_name(pkg), remind_list)
+                add_reminder(qualified_name(pkg), remind_list)
             write_list('remind', remind_list)
             break
         elif opt in ('d', 'u'):
@@ -696,9 +713,10 @@ def step_decide ():
             if not yesno('Are you sure about this?  I will delete recursively' \
                          ', you know.', False):
                 continue
+            yes = yesno('Pass --yes flag to APT?', False)
             while pkgs:
                 for pkg in pkgs:
-                    do_purge(pkg)
+                    do_purge(pkg, yes = yes)
                     if opt == 'U':
                         add_to_list(qualified_name(pkg), delete_list)
                 # re-parse
@@ -727,18 +745,29 @@ def main ():
         os.unlink('/var/cache/apt/archives/lock')
     except OSError:
         pass
+
+    if 'CHECK_PKGS_DONT_RUN' in os.environ:
+        sys.exit(0)
+
     # Drop privs to owner of this file
-    uid = os.stat(__file__).st_uid
+    st = os.stat(__file__)
+    uid = st.st_uid
     if os.getuid() != uid:
-        os.setegid(os.stat(__file__).st_gid)
+        os.setegid(st.st_gid)
         os.seteuid(uid)
 
     # Claim PID file
-    pidfile = open('/tmp/check-pkgs.pid', 'a+')
+    path = '/tmp/check-pkgs.pid'
+    def clean(*_):
+        try:
+            os.unlink(path)
+        except:
+            pass
+    atexit.register(clean)
+    pidfile = open(path, 'a+')
     try:
         fcntl.flock(pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
-        print 'check-pkgs is already running; exiting'
         sys.exit(0)
     pidfile.seek(0)
     pidfile.truncate()
@@ -748,7 +777,6 @@ def main ():
 
     # And go!
     if len(sys.argv) == 1:
-        step_crontab()
         step_deinstall()
         step_dowant()
         step_delete()
