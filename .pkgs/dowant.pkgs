@@ -12,7 +12,10 @@ iceweasel:amd64
 ## Latex and PDF things
 zathura:amd64
 pdftk:amd64
-texlive-full:all
+latex-beamer:all
+texlive-lang-danish:all
+texlive-latex-extra:all
+texlive-math-extra:all
 
 
 ## Screen lock (slock)
