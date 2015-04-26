@@ -715,8 +715,8 @@ def step_decide ():
                 continue
             yes = yesno('Pass --yes flag to APT?', False)
             while pkgs:
+                do_purge(*pkgs, yes = yes)
                 for pkg in pkgs:
-                    do_purge(pkg, yes = yes)
                     if opt == 'U':
                         add_to_list(qualified_name(pkg), delete_list)
                 # re-parse
@@ -758,17 +758,19 @@ def main ():
 
     # Claim PID file
     path = '/tmp/check-pkgs.pid'
+    pidfile = open(path, 'a+')
+    try:
+        fcntl.flock(pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        sys.exit(0)
+
     def clean(*_):
         try:
             os.unlink(path)
         except:
             pass
     atexit.register(clean)
-    pidfile = open(path, 'a+')
-    try:
-        fcntl.flock(pidfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-        sys.exit(0)
+
     pidfile.seek(0)
     pidfile.truncate()
     pidfile.write(str(os.getpid()))

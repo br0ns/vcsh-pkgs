@@ -173,3 +173,4 @@ usbutils:amd64
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
 smlnj:amd64
 libcapstone-dev:amd64
+cloc:all
