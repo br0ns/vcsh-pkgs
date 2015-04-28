@@ -174,3 +174,7 @@ usbutils:amd64
 smlnj:amd64
 libcapstone-dev:amd64
 cloc:all
+pandoc:amd64
+lmodern:all
+imagemagick:amd64
+fonts-ebgaramond:all
