@@ -286,23 +286,21 @@ def build_dependency_map (pkgs, name_map):
 
         return result
 
-    def add_dependencies(name, arch, depends):
+    def add_dependencies(pkg, depends):
         depends = depends.strip()
         if not depends:
             return
 
         for depend in depends.split(', '):
             dependencies = []
-            for pkg in depend.split(' | '):
-                dependencies.extend(find_satisfies(arch, pkg))
+            for dep_name in depend.split(' | '):
+                dependencies.extend(find_satisfies(pkg['Architecture'], dep_name))
             assert len(dependencies) >= 1
-            dependency_map.append((name, uniqify(dependencies)))
+            dependency_map.append((pkg, uniqify(dependencies)))
 
     for pkg in pkgs:
         for n in ['Depends', 'Pre-Depends']:
-            add_dependencies(qualified_name(pkg),
-                             pkg['Architecture'],
-                             pkg.get(n, ''))
+            add_dependencies(pkg, pkg.get(n, ''))
 
     return dependency_map
 
@@ -624,15 +622,7 @@ def get_orphaned ():
     # the lists are dictionaries
     deps_map = build_dependency_map(pkgs, name_map)
 
-    # Try to figure out which packages are needed.
-    # Currently we simply find all dependencies with only
-    # a single clause and mark them as "needed".
-    # I do not know if there is something smarter to do.
-    for _, deps in deps_map:
-        if len(deps) == 1:
-            deps[0]['NEEDED'] = True
-
-    # Mark packages on either of the wanted, ignore or remind lists as needed
+    # Read the lists
     dowant_list = read_list('dowant')
     ignore_list = read_list('ignore')
     remind_list = read_remind_list()
@@ -642,9 +632,29 @@ def get_orphaned ():
                   pkgs_on_list(ignore_list) + \
                   pkgs_on_list(remind_list))
     regex = re.compile('^%s$' % '|'.join(ok_pkgs))
+
+    # Try to figure out which packages are needed.
+    # We only want to want to look at dependencies
+    # where there is only a single package fulfilling
+    # the dependency.
+    deps_map_simple = [(a, bs[0]) for a, bs in deps_map if len(bs) == 1]
+
+    # We do flood-filling from the packages
+    # in the dowant, ignore and remind lists. We use a
+    # simple, quadratic implementation, since the best
+    # implementation is not that much better on so few
+    # packages.
     for pkg in pkgs:
         if regex.match(qualified_name(pkg)):
             pkg['NEEDED'] = True
+
+    go = True
+    while go:
+        go = False
+        for a, b in deps_map_simple:
+            if a.get('NEEDED') and not b.get('NEEDED'):
+                b['NEEDED'] = True
+                go = True
 
     return [pkg for pkg in pkgs if not pkg.get('NEEDED')]
 
