@@ -23,3 +23,5 @@ xserver-xorg-input-all:amd64
 xserver-xorg-video-all:amd64
 fglrx-driver:amd64
 fglrx-modules-dkms:amd64
+iw:amd64
+wireless-tools:amd64
