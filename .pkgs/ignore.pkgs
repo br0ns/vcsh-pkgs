@@ -25,3 +25,4 @@ fglrx-driver:amd64
 fglrx-modules-dkms:amd64
 iw:amd64
 wireless-tools:amd64
+wpasupplicant:amd64
