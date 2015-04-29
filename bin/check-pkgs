@@ -633,17 +633,14 @@ def get_orphaned ():
                   pkgs_on_list(remind_list))
     regex = re.compile('^%s$' % '|'.join(ok_pkgs))
 
-    # Try to figure out which packages are needed.
-    # We only want to want to look at dependencies
-    # where there is only a single package fulfilling
-    # the dependency.
+    # Try to figure out which packages are needed. We only want to look at
+    # dependencies where there is only a single package fulfilling the
+    # dependency.
     deps_map_simple = [(a, bs[0]) for a, bs in deps_map if len(bs) == 1]
 
-    # We do flood-filling from the packages
-    # in the dowant, ignore and remind lists. We use a
-    # simple, quadratic implementation, since the best
-    # implementation is not that much better on so few
-    # packages.
+    # We do flood-filling from the packages in the dowant, ignore and remind
+    # lists. We use a simple, quadratic implementation, since the best
+    # implementation is not that much better on so few packages.
     for pkg in pkgs:
         if regex.match(qualified_name(pkg)):
             pkg['NEEDED'] = True
@@ -656,7 +653,27 @@ def get_orphaned ():
                 b['NEEDED'] = True
                 go = True
 
-    return [pkg for pkg in pkgs if not pkg.get('NEEDED')]
+    # Only consider packages that are not NEEDED, i.e. "orphaned" packages
+    orphaned = [pkg for pkg in pkgs if not pkg.get('NEEDED')]
+
+    # Among the orphaned packages we find the ones that are not needed by others
+    for p in orphaned:
+        # Darn you unhashable `dict'
+        p['NEEDED_BY'] = []
+    for a, b in deps_map_simple:
+        # Package `a' needs `b', that is `b' is NEEDED_BY `a'
+        if b not in orphaned:
+            continue
+        # Caveat: circular dependencies can and do exist; if we find one, we
+        # break the circle here and mark this package as needed
+        if b in a['NEEDED_BY']:
+            continue
+        # If `b' is NEEDED_BY `a' and `a' is NEEDED_BY `c', then `b' is also
+        # NEEDED_BY `c'; we need to record this to discover circular
+        # dependencies
+        b['NEEDED_BY'] = uniqify([a] + a['NEEDED_BY'] + b['NEEDED_BY'])
+
+    return [pkg for pkg in orphaned if not pkg['NEEDED_BY']]
 
 def step_decide ():
     dowant_list = read_list('dowant')
@@ -681,6 +698,7 @@ def step_decide ():
                        ('i', 'Ignore this package'),
                        ('c', 'Continue without adding this package to any list'),
                        ('?', 'Show APT\'s information about this package'),
+                       ('f', 'List files installed by this package'),
                        ('l', 'List orphaned packages'),
                        ('r', 'Remind me of this package later'),
                        ('R', 'I said later!  Remind me of everything later'),
@@ -699,6 +717,12 @@ def step_decide ():
             pass
         elif opt == '?':
             print pkg['__raw']
+            continue
+        elif opt == 'f':
+            output = subprocess.check_output(['dpkg',
+                                              '-L',
+                                              qualified_name(pkg)])
+            sys.stdout.write(output)
             continue
         elif opt == 'l':
             print '\n'.join(map(qualified_name, pkgs))

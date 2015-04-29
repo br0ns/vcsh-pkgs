@@ -178,3 +178,6 @@ pandoc:amd64
 lmodern:all
 imagemagick:amd64
 fonts-ebgaramond:all
+iamerican:all
+ibritish:all
+moreutils:amd64

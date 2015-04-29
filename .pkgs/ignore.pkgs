@@ -1,9 +1,3 @@
-xserver-xorg-video-all
-xserver-xorg-input-all
-fglrx-driver
-fglrx-modules-dkms
-network-manager
-
 ## ALL BELOW THIS LINE ADDED BY `check-pkgs`
 login:amd64
 ncurses-base:all
@@ -20,3 +14,12 @@ firmware-iwlwifi:all
 libssl-dev:amd64
 python-lzma:amd64
 apt:amd64
+libfontconfig1-dev:amd64
+base-passwd:amd64
+lvm2:amd64
+net-tools:amd64
+ncurses-bin:amd64
+xserver-xorg-input-all:amd64
+xserver-xorg-video-all:amd64
+fglrx-driver:amd64
+fglrx-modules-dkms:amd64
