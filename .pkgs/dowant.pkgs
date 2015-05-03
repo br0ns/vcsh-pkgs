@@ -182,3 +182,6 @@ iamerican:all
 ibritish:all
 moreutils:amd64
 nasm:amd64
+vbindiff:amd64
+qemu:amd64
+unrar:amd64
