@@ -185,3 +185,5 @@ nasm:amd64
 vbindiff:amd64
 qemu:amd64
 unrar:amd64
+texlive-pstricks:all
+texlive-extra-utils:all
