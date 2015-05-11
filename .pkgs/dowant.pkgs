@@ -187,3 +187,7 @@ qemu:amd64
 unrar:amd64
 texlive-pstricks:all
 texlive-extra-utils:all
+unifont:all
+p7zip:amd64
+python-scipy:amd64
+fonts-dejavu-core:all
