@@ -191,3 +191,6 @@ unifont:all
 p7zip:amd64
 python-scipy:amd64
 fonts-dejavu-core:all
+wireshark:amd64
+gphoto2:amd64
+libjpeg-turbo-progs:amd64
