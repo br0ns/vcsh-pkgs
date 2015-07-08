@@ -1,8 +1,5 @@
 *
-!/bin
-!/bin/check-pkgs
 !/.gitignore.d
-!/.gitignore.d/packages
 !/.gitignore.d/pkgs
 !/.pkgs
 !/.pkgs/delete.pkgs
