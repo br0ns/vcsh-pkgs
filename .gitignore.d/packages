@@ -1,9 +1,0 @@
-*
-!/.gitignore.d
-!/.gitignore.d/packages
-!/.pkgs
-!/.pkgs/check-pkgs
-!/.pkgs/delete.pkgs
-!/.pkgs/dowant.pkgs
-!/.pkgs/ignore.pkgs
-!/.pkgs/remind-pkgs
