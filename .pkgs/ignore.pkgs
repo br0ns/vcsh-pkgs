@@ -28,3 +28,9 @@ wireless-tools:amd64
 wpasupplicant:amd64
 acpi:amd64
 netbase:all
+gimp:amd64
+darktable:amd64
+blender:amd64
+python-beautifulsoup:all
+mlton:all
+mlton-runtime-native:amd64

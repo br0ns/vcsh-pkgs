@@ -194,3 +194,6 @@ fonts-dejavu-core:all
 wireshark:amd64
 gphoto2:amd64
 libjpeg-turbo-progs:amd64
+libav-tools:amd64
+electrum:all
+sml-mode:all
