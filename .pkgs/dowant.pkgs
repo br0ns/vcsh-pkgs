@@ -207,3 +207,5 @@ screen:amd64
 graphviz:amd64
 texlive-science:all
 ssh-askpass:amd64
+ctorrent:amd64
+ntpdate:amd64
