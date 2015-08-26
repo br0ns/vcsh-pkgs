@@ -207,3 +207,7 @@ screen:amd64
 graphviz:amd64
 texlive-science:all
 ssh-askpass:amd64
+inkscape:amd64
+ctorrent:amd64
+sqlite3:amd64
+gcc-msp430:amd64
