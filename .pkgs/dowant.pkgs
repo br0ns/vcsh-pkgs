@@ -213,3 +213,6 @@ sqlite3:amd64
 gcc-msp430:amd64
 ctorrent:amd64
 ntpdate:amd64
+ruby:all
+ruby-dev:all
+deluge:all
