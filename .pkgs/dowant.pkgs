@@ -231,3 +231,5 @@ tor:amd64
 ncurses-doc:all
 apt-transport-https:amd64
 docker-engine:amd64
+ghp-import:amd64
+vlc:amd64
