@@ -53,6 +53,8 @@ socat:amd64
 rsync:amd64
 whois:amd64
 openvpn:amd64
+ethtool:amd64
+dnsutils:amd64
 
 
 ## Xorg and other UI things
@@ -74,6 +76,7 @@ xosd-bin:amd64
 git:amd64
 subversion:amd64
 vcsh:all
+cvs:amd64
 
 
 ## Libs (dev versions)
@@ -141,8 +144,10 @@ alsa-utils:amd64
 
 ### Programming and debugging
 ## Python
-python-pip:all
 ipython:all
+python-pip:all
+pypy:amd64
+python-scipy:amd64
 
 ## C
 gcc:amd64
@@ -150,6 +155,13 @@ gcc:amd64
 ## Haskell
 ghc:amd64
 cabal-install:amd64
+hlint:amd64
+haskell-mode:all
+
+## LLVM
+clang:amd64
+llvm-dev:amd64
+
 
 ## Debugging and utils
 strace:amd64
@@ -168,6 +180,7 @@ debootstrap:all
 hexedit:amd64
 wamerican:all
 usbutils:amd64
+inotify-tools:amd64
 
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
@@ -189,7 +202,6 @@ texlive-pstricks:all
 texlive-extra-utils:all
 unifont:all
 p7zip:amd64
-python-scipy:amd64
 fonts-dejavu-core:all
 bvi:amd64
 exif:amd64
@@ -201,7 +213,6 @@ libjpeg-turbo-progs:amd64
 libav-tools:amd64
 electrum:all
 sml-mode:all
-dnsutils:amd64
 scrot:amd64
 screen:amd64
 graphviz:amd64
@@ -213,7 +224,10 @@ sqlite3:amd64
 gcc-msp430:amd64
 ctorrent:amd64
 ntpdate:amd64
-haskell-mode:all
 ruby:all
 ruby-dev:all
 deluge:all
+tor:amd64
+ncurses-doc:all
+apt-transport-https:amd64
+docker-engine:amd64

@@ -1,3 +1,14 @@
+## Packages that I may want to install at some point, but don't want
+## to be installed by default
+gimp:amd64
+darktable:amd64
+blender:amd64
+python-beautifulsoup:all
+mlton:all
+mlton-runtime-native:amd64
+freecad:amd64
+
+
 ## ALL BELOW THIS LINE ADDED BY `check-pkgs`
 login:amd64
 ncurses-base:all
@@ -28,9 +39,3 @@ wireless-tools:amd64
 wpasupplicant:amd64
 acpi:amd64
 netbase:all
-gimp:amd64
-darktable:amd64
-blender:amd64
-python-beautifulsoup:all
-mlton:all
-mlton-runtime-native:amd64
