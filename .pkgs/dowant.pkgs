@@ -233,3 +233,5 @@ apt-transport-https:amd64
 docker-engine:amd64
 ghp-import:amd64
 vlc:amd64
+libpcre3-dev:amd64
+libxft-dev:amd64
