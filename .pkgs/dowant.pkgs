@@ -91,9 +91,6 @@ libpython2.7-dev:amd64
 libreadline6:i386
 g++-multilib:amd64
 
-# Needed by pwnlib
-libcapstone2:amd64
-
 
 ## Virtualization
 virtualbox:amd64
@@ -185,7 +182,6 @@ inotify-tools:amd64
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
 smlnj:amd64
-libcapstone-dev:amd64
 cloc:all
 pandoc:amd64
 lmodern:all
