@@ -37,6 +37,9 @@ libsm6:i386
 libxrender1:i386
 libfontconfig1:i386
 libxext6:i386
+## GUI
+libgtk2.0-0:i386
+gtk2-engines-murrine:i386
 
 
 ## Networking
@@ -178,6 +181,7 @@ hexedit:amd64
 wamerican:all
 usbutils:amd64
 inotify-tools:amd64
+when:all
 
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
@@ -231,3 +235,5 @@ ghp-import:amd64
 vlc:amd64
 libpcre3-dev:amd64
 libxft-dev:amd64
+vim-common:amd64
+ghostscript:amd64
