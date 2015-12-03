@@ -237,3 +237,4 @@ libpcre3-dev:amd64
 libxft-dev:amd64
 vim-common:amd64
 ghostscript:amd64
+xterm:amd64
