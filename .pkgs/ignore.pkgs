@@ -39,3 +39,5 @@ wireless-tools:amd64
 wpasupplicant:amd64
 acpi:amd64
 netbase:all
+keybase:amd64
+python-qt4:amd64
