@@ -239,3 +239,4 @@ vim-common:amd64
 ghostscript:amd64
 xterm:amd64
 ruby-compass:all
+eject:amd64
