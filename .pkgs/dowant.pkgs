@@ -240,3 +240,4 @@ ghostscript:amd64
 xterm:amd64
 ruby-compass:all
 eject:amd64
+bup:amd64
