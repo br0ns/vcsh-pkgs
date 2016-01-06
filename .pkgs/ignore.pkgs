@@ -42,3 +42,4 @@ fglrx-modules-dkms:amd64
 libfontconfig1-dev:amd64
 libssl-dev:amd64
 python-lzma:amd64
+docker-engine:amd64

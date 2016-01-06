@@ -12,10 +12,10 @@ iceweasel:amd64
 ## Latex and PDF things
 zathura:amd64
 pdftk:amd64
-latex-beamer:all
-texlive-lang-danish:all
 texlive-latex-extra:all
 texlive-math-extra:all
+texlive-latex-recommended:all
+texlive-fonts-recommended:all
 
 
 ## Screen lock (slock)
@@ -134,11 +134,11 @@ bash-completion:all
 ## Docs
 manpages:all
 manpages-dev:all
-manpages-posix:all
 
 
 ## Media
-mplayer2:amd64
+mplayer:amd64
+vlc:amd64
 alsa-utils:amd64
 
 
@@ -221,8 +221,6 @@ ssh-askpass:amd64
 inkscape:amd64
 ctorrent:amd64
 sqlite3:amd64
-gcc-msp430:amd64
-ctorrent:amd64
 ntpdate:amd64
 ruby:all
 ruby-dev:all
@@ -230,9 +228,7 @@ deluge:all
 tor:amd64
 ncurses-doc:all
 apt-transport-https:amd64
-docker-engine:amd64
 ghp-import:amd64
-vlc:amd64
 libpcre3-dev:amd64
 libxft-dev:amd64
 vim-common:amd64
