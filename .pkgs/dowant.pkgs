@@ -210,7 +210,7 @@ wireshark:amd64
 sshfs:amd64
 gphoto2:amd64
 libjpeg-turbo-progs:amd64
-libav-tools:amd64
+libav-tools:all
 electrum:all
 sml-mode:all
 scrot:amd64
