@@ -96,7 +96,6 @@ g++-multilib:amd64
 
 
 ## Virtualization
-virtualbox:amd64
 virtualbox-dkms:all
 virtualbox-qt:amd64
 
