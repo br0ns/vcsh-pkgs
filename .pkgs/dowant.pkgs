@@ -210,6 +210,7 @@ sshfs:amd64
 gphoto2:amd64
 libjpeg-turbo-progs:amd64
 libav-tools:all
+python-qt4:amd64
 electrum:all
 sml-mode:all
 scrot:amd64
@@ -237,3 +238,4 @@ ruby-compass:all
 eject:amd64
 bup:amd64
 bup-doc:all
+python-yaml:amd64
