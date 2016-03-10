@@ -43,3 +43,6 @@ libfontconfig1-dev:amd64
 libssl-dev:amd64
 python-lzma:amd64
 docker-engine:amd64
+mysql-server:all
+python-mysqldb:amd64
+python-pygame:amd64
