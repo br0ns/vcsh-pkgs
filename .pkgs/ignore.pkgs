@@ -46,3 +46,6 @@ docker-engine:amd64
 mysql-server:all
 python-mysqldb:amd64
 python-pygame:amd64
+audacity:amd64
+popularity-contest:all
+mysql-client:all
