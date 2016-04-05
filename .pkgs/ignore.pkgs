@@ -7,6 +7,10 @@ python-beautifulsoup:all
 mlton:all
 mlton-runtime-native:amd64
 freecad:amd64
+android-tools-adb:amd64
+keybase:amd64
+audacity:amd64
+mysql-client:all
 
 ## Packages that tend to get on the system one way or another.
 linux-image*
@@ -33,7 +37,6 @@ acpi
 netbase
 
 ## ALL BELOW THIS LINE ADDED BY `check-pkgs`
-keybase:amd64
 python-qt4:amd64
 xserver-xorg-input-all:amd64
 xserver-xorg-video-all:amd64
@@ -46,6 +49,4 @@ docker-engine:amd64
 mysql-server:all
 python-mysqldb:amd64
 python-pygame:amd64
-audacity:amd64
 popularity-contest:all
-mysql-client:all
