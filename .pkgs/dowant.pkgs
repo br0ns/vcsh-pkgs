@@ -258,3 +258,4 @@ python-dev:amd64
 libwebservice-musicbrainz-perl:all
 lsof:amd64
 pciutils:amd64
+youtube-dl:all
