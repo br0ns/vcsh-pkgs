@@ -259,3 +259,4 @@ libwebservice-musicbrainz-perl:all
 lsof:amd64
 pciutils:amd64
 youtube-dl:all
+lshw:amd64
