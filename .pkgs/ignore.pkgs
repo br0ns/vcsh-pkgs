@@ -51,3 +51,4 @@ python-mysqldb:amd64
 python-pygame:amd64
 popularity-contest:all
 hplip:amd64
+pidgin:amd64
