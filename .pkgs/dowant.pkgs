@@ -1,32 +1,51 @@
 ## Editors
-emacs:all
-emacs-goodies-el:all
-nano:amd64
+emacs
+emacs-goodies-el
+nano
 
 
 ## Browser
-chromium:amd64
-iceweasel:amd64
+chromium
+iceweasel
+
+
+## Fonts
+fonts-ebgaramond
+unifont
+fonts-dejavu-core
 
 
 ## Latex and PDF things
-zathura:amd64
-pdftk:amd64
-texlive-latex-extra:all
-texlive-math-extra:all
-texlive-latex-recommended:all
-texlive-fonts-recommended:all
+zathura
+pdftk
+texlive-latex-extra
+texlive-math-extra
+texlive-latex-recommended
+texlive-fonts-recommended
+texlive-lang-all
+texlive-pstricks
+texlive-extra-utils
+iamerican
+ibritish
+idanish
+pandoc
+texlive-science
 
 
 ## Screen lock (slock)
-suckless-tools:amd64
+suckless-tools
 
 
 ## Password manager
-pass:all
-pinentry-gtk2:amd64
-gnupg-agent:amd64
-gnupg:amd64
+pass
+pinentry-gtk2
+gnupg-agent
+gnupg
+
+
+## Needed to build blog
+ghp-import
+ruby-compass
 
 
 ## IDA needs these to work
@@ -43,220 +62,220 @@ gtk2-engines-murrine:i386
 
 
 ## Networking
-udhcpc:amd64
-traceroute:amd64
-pv:amd64
-netcat-openbsd:amd64
-ssh:all
-nmap:amd64
-iputils-ping:amd64
-wget:amd64
-curl:amd64
-socat:amd64
-rsync:amd64
-whois:amd64
-openvpn:amd64
-ethtool:amd64
-dnsutils:amd64
+udhcpc
+traceroute
+pv
+netcat-openbsd
+ssh
+nmap
+iputils-ping
+wget
+curl
+socat
+rsync
+whois
+openvpn
+ethtool
+dnsutils
 
 
 ## Xorg and other UI things
-xdm:amd64
-feh:amd64
-dmz-cursor-theme:all
-xcompmgr:amd64
-fonts-liberation:all
-gtk2-engines-murrine:amd64
-xclip:amd64
-xdotool:amd64
-tango-icon-theme:all
-autocutsel:amd64
-xorg:amd64
-xosd-bin:amd64
+xdm
+feh
+dmz-cursor-theme
+xcompmgr
+fonts-liberation
+gtk2-engines-murrine
+xclip
+xdotool
+tango-icon-theme
+autocutsel
+xorg
+xosd-bin
 
 
 ## VCS
-git:amd64
-subversion:amd64
-vcsh:all
-cvs:amd64
+git
+subversion
+vcsh
+cvs
+mercurial
 
 
 ## Libs (dev versions)
 # Needed to compile xmonad-contrib
-libxinerama-dev:amd64
-libxrandr-dev:amd64
+libxinerama-dev
+libxrandr-dev
+libpcre3-dev
+libxft-dev
 
-libpython2.7-dev:amd64
+libpython2.7-dev
 
 
 ## Libs
 libreadline6:i386
-g++-multilib:amd64
+g++-multilib
+# Needed by Rofi
+libxcb-ewmh2
+libxcb-xinerama0
 
 
 ## Virtualization
-virtualbox-dkms:all
-virtualbox-qt:amd64
+virtualbox
 
 
 ## FS and package formats things
-dtrx:all
-zip:amd64
-lzma:amd64
-gzip:amd64
-cryptsetup:amd64
-dosfstools:amd64
-e2fsprogs:amd64
+dtrx
+zip
+lzma
+gzip
+cryptsetup
+dosfstools
+e2fsprogs
 
 
 ## CLI utilities
-sudo:amd64
-psmisc:amd64
-pngcheck:amd64
-rlwrap:amd64
-file:amd64
-time:amd64
-grep:amd64
-less:amd64
-apt-file:all
-locate:amd64
-sed:amd64
-diffutils:amd64
+sudo
+psmisc
+pngcheck
+rlwrap
+file
+time
+grep
+less
+apt-file
+locate
+sed
+diffutils
 
 
 ## Shell
-autojump:all
-bash-completion:all
+autojump
+bash-completion
 
 
 ## Docs
-manpages:all
-manpages-dev:all
+manpages
+manpages-dev
 
 
 ## Media
-mplayer:amd64
-vlc:amd64
-alsa-utils:amd64
+mplayer
+vlc
+alsa-utils
+flac
+
+
+## CD-ripping
+abcde
+libmusicbrainz-discid-perl
+libwebservice-musicbrainz-perl
 
 
 ### Programming and debugging
 ## Python
-ipython:all
-python-pip:all
-pypy:amd64
-python-scipy:amd64
+ipython
+python-pip
+pypy
+python-scipy
 
 ## C
-gcc:amd64
+gcc
+gcc-doc
 
 ## Haskell
-ghc:amd64
-cabal-install:amd64
-hlint:amd64
-haskell-mode:all
+ghc
+cabal-install
+hlint
+haskell-mode
 
 ## LLVM
-clang:amd64
-llvm-dev:amd64
+clang
+llvm-dev
 
+## SML
+smlnj
+sml-mode
+
+## ASM
+nasm
+
+## Ruby
+ruby
+
+## Build tools
+build-essential
+automake
 
 ## Debugging and utils
-strace:amd64
-ltrace:amd64
-gdb:amd64
-gdbserver:amd64
-execstack:amd64
-build-essential:amd64
+strace
+ltrace
+gdb
+gdbserver
+execstack
 
 
 ## Misc
-coreutils:amd64
-pm-utils:all
-unison:amd64
-debootstrap:all
-hexedit:amd64
-wamerican:all
-usbutils:amd64
-inotify-tools:amd64
-when:all
+coreutils
+pm-utils
+unison
+debootstrap
+hexedit
+wamerican
+usbutils
+inotify-tools
+when
+vbindiff
+moreutils
+unrar
+p7zip
 
 
 # ALL BELOW THIS LINE ADDED BY `check-pkgs`
-smlnj:amd64
-cloc:all
-pandoc:amd64
-lmodern:all
-imagemagick:amd64
-fonts-ebgaramond:all
-iamerican:all
-ibritish:all
-moreutils:amd64
-nasm:amd64
-vbindiff:amd64
-qemu:amd64
-unrar:amd64
-texlive-pstricks:all
-texlive-extra-utils:all
-unifont:all
-p7zip:amd64
-fonts-dejavu-core:all
-bvi:amd64
-exif:amd64
-python-gmpy2:amd64
-wireshark:amd64
-sshfs:amd64
-gphoto2:amd64
-libjpeg-turbo-progs:amd64
-libav-tools:all
-python-qt4:amd64
-electrum:all
-sml-mode:all
-scrot:amd64
-screen:amd64
-graphviz:amd64
-texlive-science:all
-ssh-askpass:amd64
-inkscape:amd64
-ctorrent:amd64
-sqlite3:amd64
-ntpdate:amd64
-ruby:all
-ruby-dev:all
-deluge:all
-tor:amd64
-ncurses-doc:all
-apt-transport-https:amd64
-ghp-import:amd64
-libpcre3-dev:amd64
-libxft-dev:amd64
-vim-common:amd64
-ghostscript:amd64
-xterm:amd64
-ruby-compass:all
-eject:amd64
-bup:amd64
-bup-doc:all
-python-yaml:amd64
-password-gorilla:all
-cups:amd64
-mercurial:amd64
-idanish:amd64
-httrack:amd64
-abcde:all
-torbrowser-launcher:amd64
-exfat-fuse:amd64
-surf:amd64
-colordiff:all
-flac:amd64
-silversearcher-ag:amd64
-jmtpfs:amd64
-libmusicbrainz-discid-perl:amd64
-vim-tiny:amd64
-python-dev:amd64
-libwebservice-musicbrainz-perl:all
-lsof:amd64
-pciutils:amd64
-youtube-dl:all
-lshw:amd64
+cloc
+lmodern
+imagemagick
+qemu
+bvi
+exif
+python-gmpy2
+wireshark
+sshfs
+gphoto2
+libjpeg-turbo-progs
+libav-tools
+python-qt4
+electrum
+scrot
+screen
+graphviz
+ssh-askpass
+inkscape
+ctorrent
+sqlite3
+ntpdate
+deluge
+tor
+ncurses-doc
+apt-transport-https
+vim-common
+ghostscript
+xterm
+eject
+bup
+bup-doc
+python-yaml
+cups
+httrack
+torbrowser-launcher
+exfat-fuse
+surf
+colordiff
+silversearcher-ag
+jmtpfs
+vim-tiny
+lsof
+pciutils
+youtube-dl
+lshw
+gdisk
