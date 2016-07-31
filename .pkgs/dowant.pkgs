@@ -279,3 +279,4 @@ pciutils
 youtube-dl
 lshw
 gdisk
+tzdata:all
