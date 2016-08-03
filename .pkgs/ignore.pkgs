@@ -52,3 +52,4 @@ python-pygame:amd64
 popularity-contest:all
 hplip:amd64
 pidgin:amd64
+texlive-full:all

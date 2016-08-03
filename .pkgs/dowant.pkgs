@@ -280,3 +280,4 @@ youtube-dl
 lshw
 gdisk
 tzdata:all
+virtualbox-qt:amd64
