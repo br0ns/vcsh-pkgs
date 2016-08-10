@@ -282,3 +282,5 @@ gdisk
 tzdata:all
 virtualbox-qt:amd64
 tcpdump:amd64
+php-cli:all
+smbclient:amd64
