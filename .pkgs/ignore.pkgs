@@ -53,3 +53,4 @@ popularity-contest:all
 hplip:amd64
 pidgin:amd64
 texlive-full:all
+grub2:amd64
