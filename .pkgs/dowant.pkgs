@@ -181,7 +181,6 @@ python-scipy
 
 ## C
 gcc
-gcc-doc
 
 ## Haskell
 ghc
@@ -285,3 +284,4 @@ tcpdump:amd64
 php-cli:all
 smbclient:amd64
 sysvinit-utils:amd64
+a2ps:amd64
