@@ -285,3 +285,4 @@ php-cli:all
 smbclient:amd64
 sysvinit-utils:amd64
 a2ps:amd64
+gcc-doc:amd64
