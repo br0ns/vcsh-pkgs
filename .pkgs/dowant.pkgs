@@ -286,3 +286,6 @@ smbclient:amd64
 sysvinit-utils:amd64
 a2ps:amd64
 gcc-doc:amd64
+dia:amd64
+gdb-doc:all
+gdb-multiarch:amd64
