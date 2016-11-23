@@ -114,7 +114,7 @@ libpython2.7-dev
 
 ## Libs
 libreadline6:i386
-g++-multilib
+g++-6-multilib
 # Needed by Rofi
 libxcb-ewmh2
 libxcb-xinerama0
