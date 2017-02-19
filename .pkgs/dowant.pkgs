@@ -190,7 +190,6 @@ haskell-mode
 
 ## LLVM
 clang
-llvm-dev
 
 ## SML
 smlnj
