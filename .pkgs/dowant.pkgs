@@ -1,290 +1,69 @@
-## Editors
-emacs
-emacs-goodies-el
-nano
+# Needed to compile Cabal
+zlib1g-dev:amd64
 
+# Needed to compile XMonad
+libx11-dev:amd64
+libxinerama-dev:amd64
+libxrandr-dev:amd64
+libxft-dev:amd64
+libpcre3-dev:amd64
 
-## Browser
-chromium
-iceweasel
-
-
-## Fonts
-fonts-ebgaramond
-unifont
-fonts-dejavu-core
-
-
-## Latex and PDF things
-zathura
-pdftk
-texlive-latex-extra
-texlive-math-extra
-texlive-latex-recommended
-texlive-fonts-recommended
-texlive-lang-all
-texlive-pstricks
-texlive-extra-utils
-iamerican
-ibritish
-idanish
-pandoc
-texlive-science
-
-
-## Screen lock (slock)
-suckless-tools
-
-
-## Password manager
-pass
-pinentry-gtk2
-gnupg-agent
-gnupg
-
-
-## Needed to build blog
-ghp-import
-ruby-compass
-
-
-## IDA needs these to work
-libstdc++6:i386
-libglib2.0-0:i386
-libfreetype6:i386
-libsm6:i386
-libxrender1:i386
-libfontconfig1:i386
-libxext6:i386
-## GUI
-libgtk2.0-0:i386
-gtk2-engines-murrine:i386
-
-
-## Networking
-udhcpc
-traceroute
-pv
-netcat-openbsd
-ssh
-nmap
-iputils-ping
-wget
-curl
-socat
-rsync
-whois
-openvpn
-ethtool
-dnsutils
-
-
-## Xorg and other UI things
-xdm
-feh
-dmz-cursor-theme
-xcompmgr
-fonts-liberation
-gtk2-engines-murrine
-xclip
-xdotool
-tango-icon-theme
-autocutsel
-xorg
-xosd-bin
-
-
-## VCS
-git
-subversion
-vcsh
-cvs
-mercurial
-
-
-## Libs (dev versions)
-# Needed to compile xmonad-contrib
-libxinerama-dev
-libxrandr-dev
-libpcre3-dev
-libxft-dev
-
-libpython2.7-dev
-
-
-## Libs
-libreadline6:i386
-g++-6-multilib
-# Needed by Rofi
-libxcb-ewmh2
-libxcb-xinerama0
-
-
-## Virtualization
-virtualbox
-
-
-## FS and package formats things
-dtrx
-zip
-lzma
-gzip
-cryptsetup
-dosfstools
-e2fsprogs
-
-
-## CLI utilities
-sudo
-psmisc
-pngcheck
-rlwrap
-file
-time
-grep
-less
-apt-file
-locate
-sed
-diffutils
-
-
-## Shell
-autojump
-bash-completion
-
-
-## Docs
-manpages
-manpages-dev
-
-
-## Media
-mplayer
-vlc
-alsa-utils
-flac
-
-
-## CD-ripping
-abcde
-libmusicbrainz-discid-perl
-libwebservice-musicbrainz-perl
-
-
-### Programming and debugging
-## Python
-ipython
-python-pip
-pypy
-python-scipy
-
-## C
-gcc
-
-## Haskell
-ghc
-cabal-install
-hlint
-haskell-mode
-
-## LLVM
-clang
-
-## SML
-smlnj
-sml-mode
-
-## ASM
-nasm
-
-## Ruby
-ruby
-
-## Build tools
-build-essential
-automake
-
-## Debugging and utils
-strace
-ltrace
-gdb
-gdbserver
-execstack
-
-
-## Misc
-coreutils
-pm-utils
-unison
-debootstrap
-hexedit
-wamerican
-usbutils
-inotify-tools
-when
-vbindiff
-moreutils
-unrar
-p7zip
-
-
-# ALL BELOW THIS LINE ADDED BY `check-pkgs`
-cloc
-lmodern
-imagemagick
-qemu
-bvi
-exif
-python-gmpy2
-wireshark
-sshfs
-gphoto2
-libjpeg-turbo-progs
-libav-tools
-python-qt4
-electrum
-scrot
-screen
-graphviz
-ssh-askpass
-inkscape
-ctorrent
-sqlite3
-ntpdate
-deluge
-tor
-ncurses-doc
-apt-transport-https
-vim-common
-ghostscript
-xterm
-eject
-bup
-bup-doc
-python-yaml
-cups
-httrack
-torbrowser-launcher
-exfat-fuse
-surf
-colordiff
-silversearcher-ag
-jmtpfs
-vim-tiny
-lsof
-pciutils
-youtube-dl
-lshw
-gdisk
-tzdata:all
-virtualbox-qt:amd64
-tcpdump:amd64
-php-cli:all
-smbclient:amd64
-sysvinit-utils:amd64
-a2ps:amd64
-gcc-doc:amd64
-dia:amd64
-gdb-doc:all
-gdb-multiarch:amd64
+# ADDED BY `check-pkgs`
+netcat-openbsd:amd64
+vcsh:all
+ssh:all
+manpages-dev:all
+ghc:amd64
+dnsutils:amd64
+xorg:amd64
+lm-sensors:amd64
+feh:amd64
+autocutsel:amd64
+xcompmgr:amd64
+xdm:amd64
+iproute2:amd64
+net-tools:amd64
+autojump:all
+emacs:all
+chromium:amd64
+rofi:amd64
+gnupg2:all
+pass:all
+unison:amd64
+xosd-bin:amd64
+python-pip:all
+libpython-dev:amd64
+strace:amd64
+suckless-tools:amd64
+ethtool:amd64
+unison-gtk:amd64
+rsync:amd64
+pm-utils:all
+make:amd64
+apt-file:all
+pinentry-gtk2:amd64
+xdotool:amd64
+ipython:all
+aspell-en:all
+gdisk:amd64
+exfat-fuse:amd64
+dosfstools:amd64
+pulseaudio:amd64
+exfat-utils:amd64
+ntfs-3g:amd64
+eject:amd64
+curl:amd64
+gnome-themes-standard:amd64
+gtk2-engines-pixbuf:amd64
+ssh-askpass:amd64
+libssl-dev:amd64
+inkscape:amd64
+mawk:amd64
+imagemagick:amd64
+xinetd:amd64
+nasm:amd64
+libc6:i386
+libgcc1:i386
+e2fsprogs:amd64
+bash-completion:all
+apt-transport-https:amd64

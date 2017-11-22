@@ -1,13 +1,6 @@
-acpid:amd64
-anacron:amd64
-avahi-autoipd:amd64
-cron:amd64
-dbus:amd64
-debconf-i18n:all
-discover:amd64
-ifupdown:amd64
-installation-report:all
-isc-dhcp-client:amd64
-logrotate:amd64
-netcat-traditional:amd64
-tasksel:all
+xdg-user-dirs
+netcat-traditional
+isc-dhcp-client
+ifupdown
+# This package breaks my `~/.xmonad/passmenu`
+pinentry-curses
