@@ -67,3 +67,9 @@ libgcc1:i386
 e2fsprogs:amd64
 bash-completion:all
 apt-transport-https:amd64
+udhcpc:amd64
+unzip:amd64
+iw:amd64
+wireless-tools:amd64
+wpasupplicant:amd64
+openvpn:amd64
