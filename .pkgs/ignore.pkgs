@@ -6,6 +6,11 @@ xserver-xorg-*
 fonts-*
 *-theme
 *-doc
+qemu-system-*
+
+## `mlton` needs `mlton-runtime` or `mlton-runtime-native` but `check-pkgs`
+## can't handle alternative.
+mlton-runtime*
 
 ## Fresh Debian 9.2 install
 amd64-microcode:amd64
@@ -93,3 +98,34 @@ gvfs-backends:amd64
 dbus-user-session:all
 va-driver-all:amd64
 vdpau-driver-all:amd64
+libsdl2-2.0-0:amd64
+php:all
+verilator:amd64
+iverilog:amd64
+mesa-utils:amd64
+gimp:amd64
+blender:amd64
+fcrackzip:amd64
+libunicode-collate-perl:amd64
+libssh-4:amd64
+steam-launcher:all
+libgl1-mesa-glx:i386
+ndiff:all
+libcapstone3:amd64
+tp-smapi-dkms:all
+libpython2.7-dev:i386
+acpi:amd64
+task-laptop:all
+acpi-call-dkms:all
+task-print-server:all
+cmake:amd64
+smartmontools:amd64
+libhwloc5:amd64
+gcc-arm-none-eabi:amd64
+electrum:all
+dietlibc-dev:amd64
+libsdl1.2-dev:amd64
+fasm:amd64
+wine64:amd64
+libcapstone3:i386
+jmtpfs:amd64

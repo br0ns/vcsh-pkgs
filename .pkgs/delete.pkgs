@@ -4,3 +4,4 @@ isc-dhcp-client
 ifupdown
 # This package breaks my `~/.xmonad/passmenu`
 pinentry-curses
+isc-dhcp-common:amd64
